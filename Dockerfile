@@ -8,30 +8,30 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
-COPY ["ArchitectureSample.sln", "ArchitectureSample.sln"]
+COPY ["./ArchitectureSample.sln", "ArchitectureSample.sln"]
 
 # Application
-COPY ["ArchitectureSample.Application.Api/", "ArchitectureSample.Application.Api/"]
-COPY ["ArchitectureSample.Application.Dtos/", "ArchitectureSample.Application.Dtos/"]
-COPY ["ArchitectureSample.Application.Queries/", "ArchitectureSample.Application.Queries/"]
-COPY ["ArchitectureSample.Application.Commands/", "ArchitectureSample.Application.Commands/"]
+COPY ["./ArchitectureSample.Application.Api/", "ArchitectureSample.Application.Api/"]
+COPY ["./ArchitectureSample.Application.Dtos/", "ArchitectureSample.Application.Dtos/"]
+COPY ["./ArchitectureSample.Application.Queries/", "ArchitectureSample.Application.Queries/"]
+COPY ["./ArchitectureSample.Application.Commands/", "ArchitectureSample.Application.Commands/"]
 
 # Domain
-COPY ["ArchitectureSample.Domain.Core/", "ArchitectureSample.Domain.Core/"]
-COPY ["ArchitectureSample.Domain.Entities/", "ArchitectureSample.Domain.Entities/"]
-COPY ["ArchitectureSample.Domain.Repository/", "ArchitectureSample.Domain.Repository/"]
-COPY ["ArchitectureSample.Domain.Specification/", "ArchitectureSample.Domain.Specification/"]
+COPY ["./ArchitectureSample.Domain.Core/", "ArchitectureSample.Domain.Core/"]
+COPY ["./ArchitectureSample.Domain.Entities/", "ArchitectureSample.Domain.Entities/"]
+COPY ["./ArchitectureSample.Domain.Repository/", "ArchitectureSample.Domain.Repository/"]
+COPY ["./ArchitectureSample.Domain.Specification/", "ArchitectureSample.Domain.Specification/"]
 
 # Infrastructure
-COPY ["ArchitectureSample.Infrastructure.Core/", "ArchitectureSample.Infrastructure.Core/"]
-COPY ["ArchitectureSample.Infrastructure.Data/", "ArchitectureSample.Infrastructure.Data/"]
-COPY ["ArchitectureSample.Infrastructure.Persistence/", "ArchitectureSample.Infrastructure.Persistence/"]
+COPY ["./ArchitectureSample.Infrastructure.Core/", "ArchitectureSample.Infrastructure.Core/"]
+COPY ["./ArchitectureSample.Infrastructure.Data/", "ArchitectureSample.Infrastructure.Data/"]
+COPY ["./ArchitectureSample.Infrastructure.Persistence/", "ArchitectureSample.Infrastructure.Persistence/"]
 
 # Tests
-COPY ["ArchitectureSample.Tests.Unit/", "ArchitectureSample.Tests.Unit/"]
-COPY ["ArchitectureSample.Tests.Steps/", "ArchitectureSample.Tests.Steps/"]
-COPY ["ArchitectureSample.Tests.Features/", "ArchitectureSample.Tests.Features/"]
-COPY ["ArchitectureSample.Tests.Integration/", "ArchitectureSample.Tests.Integration/"]
+COPY ["./ArchitectureSample.Tests.Unit/", "ArchitectureSample.Tests.Unit/"]
+COPY ["./ArchitectureSample.Tests.Steps/", "ArchitectureSample.Tests.Steps/"]
+COPY ["./ArchitectureSample.Tests.Features/", "ArchitectureSample.Tests.Features/"]
+COPY ["./ArchitectureSample.Tests.Integration/", "ArchitectureSample.Tests.Integration/"]
 
 RUN dotnet restore "ArchitectureSample.sln"
 
