@@ -15,3 +15,7 @@ await using var context = scope.ServiceProvider.GetRequiredService<ArchitectureS
 await context.Database.EnsureCreatedAsync();
 
 await app.RunAsync();
+
+public partial class Program
+{
+}

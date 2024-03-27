@@ -15,6 +15,7 @@ public static class Extensions
 	    IConfiguration config, Type apiType)
 	{
 		services.AddHttpContextAccessor();
+		services.AddHealthChecks();
 		services.AddCustomMediatR(new[] { typeof(GetCustomer), typeof(CreateCustomer) });
 		services.AddCustomValidators(new[] { typeof(GetCustomer), typeof(CreateCustomer) });
 		services.AddControllers();
@@ -36,6 +37,7 @@ public static class Extensions
 
 		app.UseRouting();
 		app.MapControllers();
+		app.MapHealthChecks("HealthChecks");
 
 		return app.UseSwaggerCore();
 	}
