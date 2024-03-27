@@ -31,8 +31,12 @@ COPY ["ArchitectureSample.Infrastructure.Persistence/", "ArchitectureSample.Infr
 COPY ["ArchitectureSample.Tests.Unit/", "ArchitectureSample.Tests.Unit/"]
 COPY ["ArchitectureSample.Tests.Steps/", "ArchitectureSample.Tests.Steps/"]
 COPY ["ArchitectureSample.Tests.Features/", "ArchitectureSample.Tests.Features/"]
+COPY ["ArchitectureSample.Tests.Integration/", "ArchitectureSample.Tests.Integration/"]
 
 RUN dotnet restore "ArchitectureSample.sln"
+
+RUN dotnet test "ArchitectureSample.Tests.Unit" -c Release --no-restore
+RUN dotnet test "ArchitectureSample.Tests.Integration" -c Release --no-restore
 
 COPY . .
 

@@ -9,13 +9,15 @@ using FluentAssertions;
 
 namespace ArchitectureSample.Tests.Integration;
 
-[TestCaseOrderer("ArchitectureSample.Tests.Integration.CustomTestCaseOrderer", "ArchitectureSample.Tests.Integration")]
+[TestCaseOrderer("ArchitectureSample.Tests.Integration.Helpers.CustomTestCaseOrderer", "ArchitectureSample.Tests.Integration")]
 public class CustomerTests(CustomWebApplicationFactory<Program> factory) : IClassFixture<CustomWebApplicationFactory<Program>>
 {
 	[Fact]
-	[TestOrder(4)]
+	[TestOrder(3)]
 	public async Task GetCustomer_ReturnExpectedResult()
 	{
+		var createResponse = await CreateSampleData();
+
 		var request = new HttpRequestMessage(HttpMethod.Get, "api/v1/customers");
 
 		request.Headers.Add("x-query", "{}");
@@ -34,7 +36,7 @@ public class CustomerTests(CustomWebApplicationFactory<Program> factory) : IClas
 
 		result.Should().NotBeNull();
 		result!.Data!.totalItems.Should().Be(1);
-		result.Data.items.SingleOrDefault(x => x.Id == Constants.SampleId).Should()
+		result.Data.items.SingleOrDefault(x => x.Id == createResponse!.Data!.Id).Should()
 			.NotBeNull();
 		result.IsError.Should().BeFalse();
 		result.ErrorMessage.Should().BeNull();
@@ -42,7 +44,7 @@ public class CustomerTests(CustomWebApplicationFactory<Program> factory) : IClas
 
 	[Theory]
 	[MemberData(nameof(CreateData))]
-	[TestOrder(2)]
+	[TestOrder(1)]
 	public async Task CreateCustomer_ReturnExpectedResult(CreateCustomer.Command.CreateCustomerModel model, HttpStatusCode expectedStatusCode, string validationMessage)
 	{
 		var client = factory.CreateDefaultClient();
@@ -75,12 +77,29 @@ public class CustomerTests(CustomWebApplicationFactory<Program> factory) : IClas
 
 	[Theory]
 	[MemberData(nameof(UpdateData))]
-	[TestOrder(3)]
+	[TestOrder(2)]
 	public async Task UpdateCustomer_ReturnExpectedResult(UpdateCustomer.UpdateCommand.UpdateCustomerModel model, HttpStatusCode expectedStatusCode, string validationMessage)
 	{
+		var createResponse = await CreateSampleData();
+
 		var client = factory.CreateDefaultClient();
 
-		var response = await client.PutAsJsonAsync("api/v1/customers", new { Model = model });
+		var response = await client.PutAsJsonAsync("api/v1/customers",
+			new
+			{
+				Model = expectedStatusCode == HttpStatusCode.OK
+					? new UpdateCustomer.UpdateCommand.UpdateCustomerModel
+					(
+						createResponse!.Data!.Id,
+						Constants.ValidSampleFirstName,
+						Constants.SampleUpdatedLastName,
+						Constants.ValidSampleBirthOfDate,
+						Constants.ValidSamplePhoneNumber,
+						Constants.ValidSampleEmail,
+						Constants.ValidSampleBankAccount
+					)
+					: model,
+			});
 
 		response.StatusCode.Should().Be(expectedStatusCode);
 		response.Content.Headers.ContentLength.Should().BeGreaterThan(0);
@@ -107,15 +126,16 @@ public class CustomerTests(CustomWebApplicationFactory<Program> factory) : IClas
 	}
 
 	[Fact]
-	[TestOrder(1)]
+	[TestOrder(4)]
 	public async Task DeleteCustomer_ReturnExpectedResult()
 	{
+		var createResponse = await CreateSampleData();
+
 		var client = factory.CreateDefaultClient();
 
 		var request = new HttpRequestMessage(HttpMethod.Delete, "api/v1/customers");
 
-		request.Content = new StringContent(JsonSerializer.Serialize(new { Model = new { Id = Constants.SampleId } }), new MediaTypeHeaderValue("application/json"));
-		//request.Headers.Add("content-type", "application/json");
+		request.Content = new StringContent(JsonSerializer.Serialize(new { Model = new { Id = createResponse!.Data!.Id } }), new MediaTypeHeaderValue("application/json"));
 
 		var response = await client.SendAsync(request);
 
@@ -128,12 +148,34 @@ public class CustomerTests(CustomWebApplicationFactory<Program> factory) : IClas
 		});
 
 		result.Should().NotBeNull();
-		result!.Data!.Id.Should().Be(Constants.SampleId);
+		result!.Data!.Id.Should().Be(createResponse!.Data!.Id);
 		result.Data.FirstName.Should().Be(Constants.ValidSampleFirstName);
 		result.IsError.Should().BeFalse();
 		result.ErrorMessage.Should().BeNull();
 	}
 
+	private async Task<CommandApiResponse<CustomerDto>?> CreateSampleData()
+	{
+		var client = factory.CreateDefaultClient();
+
+		var response = await client.PostAsJsonAsync("api/v1/customers", new
+		{
+			Model = new CreateCustomer.Command.CreateCustomerModel
+			(
+				Constants.ValidSampleFirstName,
+				Constants.ValidSampleLastName,
+				Constants.ValidSampleBirthOfDate,
+				Constants.ValidSamplePhoneNumber,
+				Constants.ValidSampleEmail,
+				Constants.ValidSampleBankAccount
+			)
+		});
+
+		return JsonSerializer.Deserialize<CommandApiResponse<CustomerDto>>(await response.Content.ReadAsStringAsync(), new JsonSerializerOptions
+		{
+			PropertyNameCaseInsensitive = true
+		});
+	}
 
 	public static List<object[]> CreateData() =>
 		new()

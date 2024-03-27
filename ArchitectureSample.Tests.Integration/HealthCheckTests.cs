@@ -1,10 +1,10 @@
 using System.Net;
+using ArchitectureSample.Tests.Integration.Helpers;
 using FluentAssertions;
-using Microsoft.AspNetCore.Mvc.Testing;
 
 namespace ArchitectureSample.Tests.Integration;
 
-public class HealthCheckTests(WebApplicationFactory<Program> factory) : IClassFixture<WebApplicationFactory<Program>>
+public class HealthCheckTests(CustomWebApplicationFactory<Program> factory) : IClassFixture<CustomWebApplicationFactory<Program>>
 {
 	[Fact]
 	public async Task HealthCheck_ReturnOk()
