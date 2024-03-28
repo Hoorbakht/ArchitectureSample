@@ -4,14 +4,14 @@ networks:
   architecturesamplenetwork:       
 
 services:
-  # SqlServerInstance:
-  #   container_name: SqlServerContainer
-  #   image: mcr.microsoft.com/mssql/server:2022-latest
-  #   ports:
-  #     - 8002:1433
-  #   environment:
-  #     - ACCEPT_EULA=Y
-  #     - MSSQL_SA_PASSWORD=Hoorbakht@321
+  SqlServerInstance:
+    container_name: SqlServerContainer
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    ports:
+      - 8002:1433
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=Hoorbakht@321
 
   WebApi:
     container_name: api
@@ -21,5 +21,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    # depends_on:
-    #   - SqlServerInstance
+    depends_on:
+      - SqlServerInstance
+    restart: on-failure
