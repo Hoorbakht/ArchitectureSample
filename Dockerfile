@@ -36,12 +36,14 @@ COPY ["./ArchitectureSample.Tests.Integration/", "ArchitectureSample.Tests.Integ
 RUN dotnet restore "ArchitectureSample.sln"
 
 RUN dotnet test "ArchitectureSample.Tests.Unit" -c Release --no-restore
+RUN dotnet test "ArchitectureSample.Tests.Features" -c Release --no-restore
 RUN dotnet test "ArchitectureSample.Tests.Integration" -c Release --no-restore
 
 COPY . .
 
 WORKDIR "/src/ArchitectureSample.Application.Api"
 
+RUN dotnet build "./ArchitectureSample.Application.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
 RUN dotnet build "./ArchitectureSample.Application.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
