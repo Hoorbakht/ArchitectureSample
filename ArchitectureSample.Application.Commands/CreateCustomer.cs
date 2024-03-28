@@ -16,7 +16,7 @@ public class CreateCustomer
 
 		public record CreateCustomerModel(string FirstName, string LastName, DateTime BirthOfDate, string PhoneNumber, string Email, string BankAccount);
 
-		internal class Validator : AbstractValidator<Command>
+		public class Validator : AbstractValidator<Command>
 		{
 			public Validator()
 			{
