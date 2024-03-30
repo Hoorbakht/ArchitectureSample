@@ -27,6 +27,17 @@ public static class Extensions
 		    svc => svc.AddRepository(typeof(Repository<>))
 		    );
 
+		services.AddCors(options =>
+		{
+			options.AddPolicy("BlazorOrigin",
+				builder =>
+				{
+					builder.WithOrigins(config["BlazorHost"]!)
+						.AllowAnyHeader()
+						.AllowAnyMethod();
+				});
+		});
+
 		return services;
 	}
 
@@ -38,6 +49,8 @@ public static class Extensions
 		app.UseRouting();
 		app.MapControllers();
 		app.MapHealthChecks("HealthChecks");
+
+		app.UseCors("BlazorOrigin");
 
 		return app.UseSwaggerCore();
 	}

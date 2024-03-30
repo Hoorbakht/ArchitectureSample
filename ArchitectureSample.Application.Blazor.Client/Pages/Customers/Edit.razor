@@ -1,0 +1,42 @@
+﻿@page "/Customers/edit/{customerId:guid}"
+@using System.Text.Json
+@using ArchitectureSample.Application.Blazor.Client.Dtos
+@inject HttpClient HttpClient
+@attribute [StreamRendering]
+
+<PageTitle>Edit Customer</PageTitle>
+
+<h1>Edit Customer</h1>
+
+
+<p role="status">Current Id: @CustomerId</p>
+
+@if (customer == null)
+{
+	<p><em>Loading...</em></p>
+}
+else
+{
+	<input value="@customer.FirstName" />
+}
+
+@code {
+	[Parameter]
+	public Guid? CustomerId { get; set; }
+
+	private CustomerDto? customer;
+
+	protected override async Task OnInitializedAsync()
+	{
+		var request = new HttpRequestMessage(HttpMethod.Get, "/api/v1/customers");
+
+		request.Headers.Add("x-query", "{ id : \"" + CustomerId + "\"}");
+
+		var response = await HttpClient.SendAsync(request);
+
+		customer = JsonSerializer.Deserialize<QueryApiResponse<CustomerDto>>(await response.Content.ReadAsStringAsync(), new JsonSerializerOptions
+			{
+				PropertyNameCaseInsensitive = true
+			}).Data.items.FirstOrDefault();
+	}
+}

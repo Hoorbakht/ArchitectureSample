@@ -1,0 +1,75 @@
+﻿@page "/customers/list"
+@using System.Text.Json
+@using ArchitectureSample.Application.Blazor.Client.Dtos
+@inject HttpClient HttpClient
+@attribute [StreamRendering]
+@rendermode InteractiveAuto
+
+<PageTitle>Customers</PageTitle>
+
+<h1>Customers</h1>
+
+<p>This component demonstrates showing data.</p>
+
+@if (customers == null)
+{
+	<p><em>Loading...</em></p>
+}
+else
+{
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Id</th>
+				<th>First Name</th>
+				<th>Last Name</th>
+				<th>Date of Birth</th>
+				<th>Phone Number</th>
+				<th>E-Mail</th>
+				<th>Bank Account</th>
+				<th>Command(s)</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var item in customers)
+			{
+				<tr>
+					<td>@item.Id</td>
+					<td>@item.FirstName</td>
+					<td>@item.LastName</td>
+					<td>@item.DateOfBirth.ToString("F")</td>
+					<td>@item.PhoneNumber</td>
+					<td>@item.Email</td>
+					<td>@item.BankAccount</td>
+					<td>
+						<a class="btn btn-primary" href="/Customers/edit/@item.Id">Edit</a>
+						<a class="btn btn-danger" @onclick="() => Delete(item.Id)">Delete</a>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}
+
+@code {
+	private List<CustomerDto>? customers;
+
+	protected override async Task OnInitializedAsync()
+	{
+		var request = new HttpRequestMessage(HttpMethod.Get, "/api/v1/customers");
+
+		request.Headers.Add("x-query", "{}");
+
+		var response = await HttpClient.SendAsync(request);
+
+		customers = JsonSerializer.Deserialize<QueryApiResponse<CustomerDto>>(await response.Content.ReadAsStringAsync(), new JsonSerializerOptions
+			{
+				PropertyNameCaseInsensitive = true
+			}).Data.items;
+	}
+
+	private async void Delete(Guid id)
+	{
+		Console.WriteLine(id);
+	}
+}

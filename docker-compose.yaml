@@ -14,7 +14,7 @@ services:
       - MSSQL_SA_PASSWORD=Hoorbakht@321
 
   WebApi:
-    container_name: api
+    container_name: architecturesample-api
     image: architecturesample:dev
     ports:
       - "8080:8080"
@@ -24,3 +24,25 @@ services:
     depends_on:
       - SqlServerInstance
     restart: on-failure
+
+  BlazorClient:
+    container_name: architecturesample-blazor-client
+    image: architecturesample/blazor/client:dev
+    ports:
+      - "9191:80"
+    build:
+      context: .
+      dockerfile: Dockerfile-Blazor-Client
+    depends_on:
+      - WebApi 
+  
+  BlazorServer:
+    container_name: architecturesample-blazor-server
+    image: architecturesample/blazor/server:dev
+    ports:
+      - "9091:8080"
+    build:
+      context: .
+      dockerfile: Dockerfile-Blazor-Server
+    depends_on:
+      - BlazorClient 
