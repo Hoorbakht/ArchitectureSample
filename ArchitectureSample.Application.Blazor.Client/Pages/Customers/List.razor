@@ -9,7 +9,7 @@
 
 <h1>Customers</h1>
 
-<p>This component demonstrates showing data.</p>
+<a href="/customers/create" class="btn btn-info">Create</a>
 
 @if (customers == null)
 {
@@ -44,6 +44,7 @@ else
 					<td>
 						<a class="btn btn-primary" href="/Customers/edit/@item.Id">Edit</a>
 						<a class="btn btn-danger" @onclick="() => Delete(item.Id)">Delete</a>
+						<a class="btn btn-danger" href="/Customers/edit/@item.Id">View</a>
 					</td>
 				</tr>
 			}

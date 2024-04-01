@@ -1,0 +1,129 @@
+﻿@page "/customers/new/{Page}"
+@using ArchitectureSample.Application.Blazor.Client.Dtos
+@inject Services.ICustomerService CustomerService
+@inject NavigationManager UriHelper
+
+<h1>Customers</h1>
+<br />
+
+<div class="row mb-3">
+	<div class="col-md-7">
+		<NavLink href="/customers/add/new" class="btn btn-sm btn-success mb-2">Add Customer</NavLink>
+	</div>
+	<div class="input-group col-md-5 text-md-right">
+		<input name="CustomerSearchInput" type="text" class="form-control mb-2" placeholder="Customer Name" @bind="SearchTerm" @onkeyup="SearchBoxKeyPress" />
+		<div class="input-group-btn">
+			<button name="CustomerSearchButton" class="btn btn-success" @onclick="SearchClick">
+				Search
+			</button>
+		</div>
+		<div class="input-group-btn">
+			<button name="CustomerSearchClear" class="btn btn-info" @onclick="ClearSearch">
+				Clear
+			</button>
+		</div>
+	</div>
+</div>
+
+@if (_customers == null)
+{
+	<p><em>Loading...</em></p>
+}
+else
+{
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>Id</th>
+				<th>First Name</th>
+				<th>Last Name</th>
+				<th>Date of Birth</th>
+				<th>Phone Number</th>
+				<th>E-Mail</th>
+				<th>Bank Account</th>
+				<th>Command(s)</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var item in _customers.Data?.items ?? new List<CustomerDto>())
+			{
+				<tr>
+					<td>@item.Id</td>
+					<td>@item.FirstName</td>
+					<td>@item.LastName</td>
+					<td>@item.DateOfBirth.ToString("F")</td>
+					<td>@item.PhoneNumber</td>
+					<td>@item.Email</td>
+					<td>@item.BankAccount</td>
+					<td>
+						<a href="@($"/customers/view/{item.Id}")" class="btn btn-info">View</a>
+						<a href="@($"/customers/edit/{item.Id}")" class="btn btn-success">Update</a>
+						<a href="#" @onclick="@(() => Delete(item))" class="btn btn-danger">Delete</a>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+	<Pager Result=@_customers PageChanged=PagerPageChanged />
+}
+
+@code {
+	[Parameter]
+	public string Page { get; set; } = "1";
+	[Parameter]
+	public string SearchTerm { get; set; } = string.Empty;
+
+	private QueryApiResponse<CustomerDto>? _customers;
+
+	protected override void OnInitialized()
+	{
+		//PageHistoryState.AddPageToHistory(UriHelper.Uri);
+		base.OnInitialized();
+	}
+
+	protected override async Task OnParametersSetAsync()
+	{
+		_customers = await CustomerService.Get(int.Parse(Page));
+		//PageHistoryState.AddPageToHistory(UriHelper.Uri);
+	}
+
+	protected async Task SearchBoxKeyPress(KeyboardEventArgs ev)
+	{
+		if (ev.Key == "Enter")
+		{
+			await SearchClick();
+		}
+	}
+
+	protected async Task SearchClick()
+	{
+		if (string.IsNullOrEmpty(SearchTerm))
+		{
+			_customers = await CustomerService.Get(int.Parse(Page));
+			return;
+		}
+		//customers = await CustomerService.Get(SearchTerm,int.Parse(Page));
+		StateHasChanged();
+	}
+
+	protected async Task ClearSearch()
+	{
+		SearchTerm = string.Empty;
+		_customers = await CustomerService.Get(int.Parse(Page));
+		//PageHistoryState.AddPageToHistory(UriHelper.Uri);
+		StateHasChanged();
+	}
+
+	protected void PagerPageChanged(int page)
+	{
+		UriHelper.NavigateTo("/customers/new/" + page);
+		//PageHistoryState.AddPageToHistory(UriHelper.Uri);
+	}
+
+	private async void Delete(CustomerDto customerDto)
+	{
+		await CustomerService.Delete(customerDto.Id);
+		_customers = await CustomerService.Get(int.Parse(Page));
+		StateHasChanged();
+	}
+}

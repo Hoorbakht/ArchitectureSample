@@ -1,0 +1,85 @@
+﻿@page "/customers/create"
+@using ArchitectureSample.Application.Blazor.Client.Dtos
+@using ArchitectureSample.Application.Blazor.Client.Services
+@attribute [StreamRendering]
+@inject ICustomerService CustomerService
+@inject NavigationManager NavigationManager
+@rendermode InteractiveAuto
+
+<PageTitle>Create Customer</PageTitle>
+
+<h1>Create Customer</h1>
+
+@if (_errorMessage != null)
+{
+	<p class="text-danger">@_errorMessage</p>
+}
+
+<div class="form-group">
+	<label for="firstName">First Name:</label>
+	<input id="firstName" class="form-control" @bind="@_customer.FirstName" />
+</div>
+
+<div class="form-group">
+	<label for="lastName">Last Name:</label>
+	<input id="lastName" class="form-control" @bind="@_customer.LastName" />
+</div>
+
+<div class="form-group">
+	<label for="dateOfBirth">Date of Birth:</label>
+	<input id="dateOfBirth" type="date" class="form-control" @bind="@_customer.DateOfBirth" />
+</div>
+
+<div class="form-group">
+	<label for="phoneNumber">Phone Number:</label>
+	<input id="phoneNumber" class="form-control" @bind="@_customer.PhoneNumber" />
+</div>
+
+<div class="form-group">
+	<label for="email">Email:</label>
+	<input id="email" type="email" class="form-control" @bind="@_customer.Email" />
+</div>
+
+<div class="form-group">
+	<label for="bankAccount">Bank Account:</label>
+	<input id="bankAccount" class="form-control" @bind="@_customer.BankAccount" />
+</div>
+
+<button class="btn btn-primary" @onclick="CreateCustomer">Create</button>
+
+@code {
+	private readonly CustomerDto _customer = new()
+		{
+			DateOfBirth = DateTime.Now.AddYears(-30),
+			BankAccount = string.Empty,
+			Email = string.Empty,
+			PhoneNumber = string.Empty,
+			FirstName = string.Empty,
+			LastName = string.Empty,
+		};
+	private string? _errorMessage = string.Empty;
+
+	private async Task CreateCustomer()
+	{
+		// Add some validation here
+
+		if (_customer.FirstName.Length < 5)
+		{
+			_errorMessage += "First name must contain more than 10 char";
+			return;
+		}
+			
+		try
+		{
+			var response = await CustomerService.Create(_customer);
+
+			_errorMessage = await response.Content.ReadAsStringAsync();
+
+			//NavigationManager.NavigateTo("/customers/new/1");
+		}
+		catch (Exception ex)
+		{
+			_errorMessage = $"An error occurred while creating the customer: {ex.Message}";
+		}
+	}
+}

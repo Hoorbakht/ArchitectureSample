@@ -1,7 +1,7 @@
+using ArchitectureSample.Application.Blazor.Client.Services;
 using ArchitectureSample.Application.Blazor.Server.Components;
 
 var builder = WebApplication.CreateBuilder(args);
-
 
 builder.Services.AddRazorComponents()
 	.AddInteractiveServerComponents()
@@ -12,7 +12,20 @@ builder.Services.AddRazorComponents()
 		var handler = new HttpClientHandler();
 		handler.ServerCertificateCustomValidationCallback = (_, _, _, _) => true;
 		return new HttpClient(handler) { BaseAddress = new Uri(builder.Configuration["ApiHost"]!) };
-	});
+	})
+	.AddScoped(_ =>
+	{
+		var handler = new HttpClientHandler();
+		handler.ServerCertificateCustomValidationCallback = (_, _, _, _) => true;
+		return new HttpClient(handler) { BaseAddress = new Uri(builder.WebHost.GetSetting("ASPNETCORE_URLS")!.Split(';').Single(x => x.StartsWith("http://"))) };
+	})
+	.AddControllers()
+	.Services
+	.AddHealthChecks()
+	.Services
+	.AddSwaggerGen();
+
+builder.Services.AddScoped<ICustomerService, CustomerService>();
 
 var app = builder.Build();
 
@@ -24,11 +37,15 @@ else
 
 app.UseHttpsRedirection()
 	.UseStaticFiles()
-	.UseAntiforgery();
+	.UseAntiforgery()
+	.UseSwagger()
+	.UseSwaggerUI();
+
+app.MapControllers();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AddInteractiveWebAssemblyRenderMode()
     .AddAdditionalAssemblies(typeof(ArchitectureSample.Application.Blazor.Client._Imports).Assembly);
 
-app.Run();
+await app.RunAsync();

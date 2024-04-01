@@ -10,3 +10,10 @@ public record Data<T> where T : class
 
 	public int pageSize { get; set; }
 }
+
+public record Create<T> where T : class
+{
+	public T Model { get; init; } = default!;
+}
+
+public record CreateCustomerModel(string FirstName, string LastName, DateTime BirthOfDate, string PhoneNumber, string Email, string BankAccount);

@@ -1,0 +1,81 @@
+@using ArchitectureSample.Application.Blazor.Client.Dtos
+<EditForm Model="@Customer" OnValidSubmit="@OnValidSubmit" FormName="@FormName">
+	<div class="form-group">
+		<label>First Name :</label>
+		<div>
+			<InputText @bind-Value="@Customer.FirstName" class="form-control col-sm-3" />
+		</div>
+	</div>
+	<div class="form-group">
+		<label>Last Name :</label>
+		<div>
+			<InputText @bind-Value="@Customer.LastName" class="form-control col-sm-3" />
+			@* <ValidationMessage For="@(() => Customer.LastName)" /> *@
+		</div>
+	</div>
+	<div class="form-group ">
+		<div>
+			<label>Date of Birth :</label>
+			<div>
+				<input id="dateOfBirth" type="date" class="form-control" @bind="@Customer.DateOfBirth" />
+			</div>
+		</div>
+	</div>
+	<div class="form-group ">
+		<div>
+			<label>Phone Number :</label>
+			<div>
+				<InputText @bind-Value="@Customer.PhoneNumber" class="form-control col-sm-3" />
+			</div>
+		</div>
+	</div>
+
+	<div class="form-group ">
+		<div>
+			<label>E-Mail :</label>
+			<div>
+				<InputText @bind-Value="@Customer.Email" class="form-control col-sm-3" />
+			</div>
+		</div>
+	</div>
+
+	<div class="form-group ">
+		<div>
+			<label>Bank Account :</label>
+			<div>
+				<InputText @bind-Value="@Customer.BankAccount" class="form-control col-sm-3" />
+			</div>
+		</div>
+	</div>
+
+	<hr />
+
+	<div class="form-group">
+		<button disabled="@Loading" class="btn btn-primary">
+			@if (Loading)
+			{
+				<span class="spinner-border spinner-border-sm mr-1"></span>
+			}
+			@ButtonText
+		</button>
+		<NavLink href="/customers/new/1" class="btn btn-link">Back</NavLink>
+	</div>
+
+</EditForm>
+
+@code {
+	[Parameter]
+	public CustomerDto? Customer { get; set; }
+
+	[Parameter]
+	public string ButtonText { get; set; } = "Save";
+
+	[Parameter]
+	public string FormName { get; set; } = "Create";
+
+	[Parameter]
+	public bool Loading { get; set; } = false;
+
+	[Parameter]
+	public EventCallback OnValidSubmit { get; set; }
+}
