@@ -10,11 +10,11 @@ public interface IGridSpecification<T> : IRootSpecification
 
 	List<string> IncludeStrings { get; }
 
-	Expression<Func<T, object>> OrderBy { get; }
+	Expression<Func<T, object>>? OrderBy { get; }
 
-	Expression<Func<T, object>> OrderByDescending { get; }
+	Expression<Func<T, object>>? OrderByDescending { get; }
 
-	Expression<Func<T, object>> GroupBy { get; }
+	Expression<Func<T, object>>? GroupBy { get; }
 
 	int Take { get; }
 

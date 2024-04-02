@@ -12,7 +12,7 @@ namespace ArchitectureSample.Application.Api;
 public static class Extensions
 {
 	public static IServiceCollection AddCoreServices(this IServiceCollection services,
-	    IConfiguration config, Type apiType)
+	    IConfiguration config, Type apiType, IWebHostEnvironment environment)
 	{
 		services.AddHttpContextAccessor();
 		services.AddHealthChecks();
@@ -21,11 +21,16 @@ public static class Extensions
 		services.AddControllers();
 		services.AddSwagger(apiType);
 
-		services.AddSqlServerDbContext<ArchitectureSampleContext>(
-		    config.GetConnectionString("SqlServer") ?? "",
-		    null,
-		    svc => svc.AddRepository(typeof(Repository<>))
-		    );
+		if (environment.IsProduction())
+			services.AddSqlServerDbContext<ArchitectureSampleContext>(
+			    config.GetConnectionString("SqlServer") ?? "",
+			    null,
+			    svc => svc.AddRepository(typeof(Repository<>))
+			    );
+		else
+			services.AddInMemoryDbContext<ArchitectureSampleContext>(
+				svc => svc.AddRepository(typeof(Repository<>))
+			);
 
 		services.AddCors(options =>
 		{

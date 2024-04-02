@@ -34,13 +34,13 @@ public static class Extensions
 		const string descendingSuffix = "Desc";
 
 		var descending = sort.EndsWith(descendingSuffix, StringComparison.Ordinal);
-		var propertyName = sort.Substring(0, 1).ToUpperInvariant() +
-		                   sort.Substring(1, sort.Length - 1 - (descending ? descendingSuffix.Length : 0));
+		var propertyName = sort[..1].ToUpperInvariant() +
+				   sort.Substring(1, sort.Length - 1 - (descending ? descendingSuffix.Length : 0));
 
 		var specificationType = gridSpec.GetType().BaseType;
 		var targetType = specificationType?.GenericTypeArguments[0];
 		var property = targetType!.GetRuntimeProperty(propertyName) ??
-		               throw new InvalidOperationException($"Because the property {propertyName} does not exist it cannot be sorted.");
+			       throw new InvalidOperationException($"Because the property {propertyName} does not exist it cannot be sorted.");
 
 		var lambdaParamX = Expression.Parameter(targetType!, "x");
 

@@ -6,39 +6,39 @@ namespace ArchitectureSample.Domain.Specification;
 public abstract class GridSpecificationBase<T> : IGridSpecification<T>
 {
 	public virtual List<Expression<Func<T, bool>>> Criterias { get; } = new();
-	
+
 	public List<Expression<Func<T, object>>> Includes { get; } = new();
-	
+
 	public List<string> IncludeStrings { get; } = new();
-	
-	public Expression<Func<T, object>> OrderBy { get; private set; }
-	
-	public Expression<Func<T, object>> OrderByDescending { get; private set; }
-	
-	public Expression<Func<T, object>> GroupBy { get; private set; }
+
+	public Expression<Func<T, object>>? OrderBy { get; private set; }
+
+	public Expression<Func<T, object>>? OrderByDescending { get; private set; }
+
+	public Expression<Func<T, object>>? GroupBy { get; private set; }
 
 	public int Take { get; private set; }
-	
+
 	public int Skip { get; private set; }
-	
+
 	public bool IsPagingEnabled { get; set; }
 
 	protected void ApplyIncludeList(IEnumerable<Expression<Func<T, object>>> includes)
 	{
-		foreach (var include in includes) 
+		foreach (var include in includes)
 			AddInclude(include);
 	}
 
-	protected void AddInclude(Expression<Func<T, object>> includeExpression) => 
+	protected void AddInclude(Expression<Func<T, object>> includeExpression) =>
 		Includes.Add(includeExpression);
 
 	protected void ApplyIncludeList(IEnumerable<string> includes)
 	{
-		foreach (var include in includes) 
+		foreach (var include in includes)
 			AddInclude(include);
 	}
 
-	protected void AddInclude(string includeString) => 
+	protected void AddInclude(string includeString) =>
 		IncludeStrings.Add(includeString);
 
 	protected IGridSpecification<T> ApplyFilterList(IEnumerable<FilterModel> filters)
@@ -74,10 +74,10 @@ public abstract class GridSpecificationBase<T> : IGridSpecification<T>
 
 	protected void ApplySortingList(IEnumerable<string> sorts)
 	{
-		foreach (var sort in sorts) 
+		foreach (var sort in sorts)
 			ApplySorting(sort);
 	}
 
-	protected void ApplySorting(string sort) => 
+	protected void ApplySorting(string sort) =>
 		this.ApplySorting(sort, nameof(ApplyOrderBy), nameof(ApplyOrderByDescending));
 }

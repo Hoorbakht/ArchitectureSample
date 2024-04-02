@@ -27,9 +27,23 @@ public static class Extensions
 		services.AddScoped<IDbFacadeResolver>(provider => provider.GetService<TDbContext>()!);
 		services.AddScoped<IDomainEventContext>(provider => provider.GetService<TDbContext>()!);
 
-		//services.AddScoped(typeof(IPipelineBehavior<,>), typeof(TxBehavior<,>));
+		services.AddScoped(typeof(IPipelineBehavior<,>), typeof(TxBehavior<,>));
 
-		//services.AddHostedService<DbContextMigratorHostedService>();
+		services.AddHostedService<DbContextMigratorHostedService>();
+
+		doMoreActions?.Invoke(services);
+
+		return services;
+	}
+
+	public static IServiceCollection AddInMemoryDbContext<TDbContext>(this IServiceCollection services,
+		Action<IServiceCollection>? doMoreActions = null)
+		where TDbContext : DbContext, IDbFacadeResolver, IDomainEventContext
+	{
+		services.AddDbContext<TDbContext>(options => options.UseInMemoryDatabase("Database"));
+
+		services.AddScoped<IDbFacadeResolver>(provider => provider.GetService<TDbContext>()!);
+		services.AddScoped<IDomainEventContext>(provider => provider.GetService<TDbContext>()!);
 
 		doMoreActions?.Invoke(services);
 

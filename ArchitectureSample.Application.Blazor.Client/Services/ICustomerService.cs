@@ -4,7 +4,7 @@ namespace ArchitectureSample.Application.Blazor.Client.Services;
 
 public interface ICustomerService
 {
-	Task<QueryApiResponse<CustomerDto>?> Get(int page);
+	Task<QueryApiResponse<CustomerDto>?> Get(QueryApiRequest apiRequest);
 
 	Task<CustomerDto> Get(Guid id);
 

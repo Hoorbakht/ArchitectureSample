@@ -1,5 +1,6 @@
 using ArchitectureSample.Application.Blazor.Client.Services;
 using ArchitectureSample.Application.Blazor.Server.Components;
+using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,7 +24,8 @@ builder.Services.AddRazorComponents()
 	.Services
 	.AddHealthChecks()
 	.Services
-	.AddSwaggerGen();
+	.AddSwaggerGen()
+	.AddMudServices();
 
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 

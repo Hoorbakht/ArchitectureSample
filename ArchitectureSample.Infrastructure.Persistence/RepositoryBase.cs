@@ -92,7 +92,7 @@ public class RepositoryBase<TDbContext, TEntity> : IRepository<TEntity>, IGridRe
 			query = query.GroupBy(specification.GroupBy).SelectMany(x => x);
 
 		if (specification.IsPagingEnabled)
-			query = query.Skip(specification.Skip - 1)
+			query = query.Skip((specification.Skip - 1) * specification.Take)
 				.Take(specification.Take);
 
 		return query;
@@ -125,7 +125,7 @@ public class RepositoryBase<TDbContext, TEntity> : IRepository<TEntity>, IGridRe
 			query = query.GroupBy(specification.GroupBy).SelectMany(x => x);
 
 		if (specification.IsPagingEnabled)
-			query = query.Skip(specification.Skip - 1)
+			query = query.Skip((specification.Skip - 1) * specification.Take)
 				.Take(specification.Take);
 
 		return query;

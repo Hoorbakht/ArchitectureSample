@@ -6,13 +6,13 @@ namespace ArchitectureSample.Application.Blazor.Client.Services;
 
 public class CustomerService(HttpClient httpClient) : ICustomerService
 {
-	public async Task<QueryApiResponse<CustomerDto>?> Get(int page)
+	public async Task<QueryApiResponse<CustomerDto>?> Get(QueryApiRequest apiRequest)
 	{
-		var request = new HttpRequestMessage(HttpMethod.Get, "api/Customer" + "?page=" + page);
-
+		var request = new HttpRequestMessage(HttpMethod.Get, "api/Customer");
+		
+		request.Headers.Add("x-query", JsonSerializer.Serialize(apiRequest));
+		
 		var response = await httpClient.SendAsync(request);
-
-		var content = await response.Content.ReadAsStringAsync();
 
 		if (response.IsSuccessStatusCode)
 		{

@@ -10,17 +10,15 @@ public class CustomerController : ControllerBase
 {
 	private readonly HttpClient _httpClient;
 
-	public CustomerController(IEnumerable<HttpClient> httpClients)
-	{
+	public CustomerController(IEnumerable<HttpClient> httpClients) =>
 		_httpClient = httpClients.Single(x => x.BaseAddress!.Port != 9090);
-	}
 
 	[HttpGet]
-	public async Task<IActionResult> Get(string page)
+	public async Task<IActionResult> Get([FromHeader(Name = "x-query")] string query)
 	{
 		var request = new HttpRequestMessage(HttpMethod.Get, "/api/v1/customers");
 
-		request.Headers.Add("x-query", "{page : " + page + "}");
+		request.Headers.Add("x-query", query);
 
 		var response = await _httpClient.SendAsync(request);
 
