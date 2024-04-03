@@ -7,12 +7,9 @@ namespace ArchitectureSample.Application.Blazor.Server.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class CustomerController : ControllerBase
+public class CustomerController(IEnumerable<HttpClient> httpClients) : ControllerBase
 {
-	private readonly HttpClient _httpClient;
-
-	public CustomerController(IEnumerable<HttpClient> httpClients) =>
-		_httpClient = httpClients.Single(x => x.BaseAddress!.Port != 9090);
+	private readonly HttpClient _httpClient = httpClients.Single(x => x.BaseAddress!.Port != 9090);
 
 	[HttpGet]
 	public async Task<IActionResult> Get([FromHeader(Name = "x-query")] string query)
@@ -28,12 +25,6 @@ public class CustomerController : ControllerBase
 			: BadRequest(await response.Content.ReadAsStringAsync());
 	}
 
-	[HttpGet("{id}")]
-	public async Task<IActionResult> Get(Guid id)
-	{
-		return await Task.FromResult(Ok(id));
-	}
-
 	[HttpPost]
 	public async Task<IActionResult> Create(CreateCustomerDto customer)
 	{
@@ -47,9 +38,15 @@ public class CustomerController : ControllerBase
 	}
 
 	[HttpPut]
-	public async Task<IActionResult> Update()
+	public async Task<IActionResult> Update(UpdateCustomerDto customer)
 	{
-		return await Task.FromResult(Ok());
+		var response = await _httpClient.PutAsJsonAsync("api/v1/customers", customer);
+
+		var content = await response.Content.ReadAsStringAsync();
+
+		return response.IsSuccessStatusCode
+			? Ok(content)
+			: BadRequest(content);
 	}
 
 	[HttpDelete]

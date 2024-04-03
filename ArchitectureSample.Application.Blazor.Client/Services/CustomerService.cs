@@ -1,7 +1,6 @@
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Nodes;
 using ArchitectureSample.Application.Blazor.Client.Dtos;
 
 namespace ArchitectureSample.Application.Blazor.Client.Services;
@@ -26,9 +25,28 @@ public class CustomerService(HttpClient httpClient) : ICustomerService
 		return null;
 	}
 
-	public Task<CustomerDto> Get(Guid id)
+	public async Task<ApiResponse<Data<CustomerDto>>?> GetById(Guid id)
 	{
-		throw new NotImplementedException();
+		var request = new HttpRequestMessage(HttpMethod.Get, "api/Customer");
+
+		request.Headers.Add("x-query", JsonSerializer.Serialize(new QueryApiRequest
+		{
+			Filters = new List<FilterModel>
+			{
+				new("Id","==",id.ToString())
+			}
+		}));
+
+		var response = await httpClient.SendAsync(request);
+
+		if (response.IsSuccessStatusCode)
+		{
+			return JsonSerializer.Deserialize<ApiResponse<Data<CustomerDto>>>(await response.Content.ReadAsStringAsync(), new JsonSerializerOptions
+			{
+				PropertyNameCaseInsensitive = true
+			});
+		}
+		return null;
 	}
 
 	public async Task<ApiResponse<CustomerDto>?> Delete(Guid id)
@@ -78,8 +96,24 @@ public class CustomerService(HttpClient httpClient) : ICustomerService
 		};
 	}
 
-	public Task Update(CustomerDto customerDto)
+	public async Task<ApiResponse<CustomerDto>?> Update(CustomerDto customerDto)
 	{
-		throw new NotImplementedException();
+		var response = await httpClient.PutAsJsonAsync("api/Customer", new
+		{
+			Model = new UpdateCustomerModel(customerDto.Id, customerDto.FirstName!, customerDto.LastName!, customerDto.DateOfBirth!.Value, customerDto.PhoneNumber!, customerDto.Email!, customerDto.BankAccount!)
+		});
+
+		if (response.IsSuccessStatusCode)
+		{
+			return JsonSerializer.Deserialize<ApiResponse<CustomerDto>>(await response.Content.ReadAsStringAsync(), new JsonSerializerOptions
+			{
+				PropertyNameCaseInsensitive = true
+			});
+		}
+		return new ApiResponse<CustomerDto>
+		{
+			IsError = true,
+			ErrorMessage = await response.Content.ReadAsStringAsync()
+		};
 	}
 }
