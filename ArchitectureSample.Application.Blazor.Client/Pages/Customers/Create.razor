@@ -6,6 +6,8 @@
 @inject NavigationManager NavigationManager
 @rendermode InteractiveServer
 
+<PageTitle>Create Customer | Architecture Sample</PageTitle>
+
 <MudDialogProvider />
 <MudSnackbarProvider />
 
@@ -47,7 +49,8 @@
 		</MudCardContent>
 	</MudForm>
 	<MudCardActions>
-		<MudButton Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto" OnClick="@(async () => await Submit())">Order</MudButton>
+		<MudButton Variant="Variant.Filled" Color="Color.Primary" Style="margin-right: 10px" OnClick="@(async () => await Submit())">Save</MudButton>
+		<MudButton Variant="Variant.Filled" Color="Color.Secondary" Href="/customers">Cancel</MudButton>
 	</MudCardActions>
 </MudCard>
 

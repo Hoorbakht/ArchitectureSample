@@ -8,6 +8,8 @@
 <MudDialogProvider />
 <MudSnackbarProvider />
 
+<PageTitle>Customers | Architecture Sample </PageTitle>
+
 <MudText Typo="Typo.h3" GutterBottom="true">Customers</MudText>
 <br />
 
@@ -76,8 +78,8 @@
 				Page = state.Page + 1,
 				PageSize = state.PageSize,
 				Filters = !string.IsNullOrWhiteSpace(_searchString)
-					? new List<FilterModel> { new("FirstName", "Contains", _searchString!) }
-					: new List<FilterModel>()
+						? new List<FilterModel> { new("FirstName", "Contains", _searchString!) }
+						: new List<FilterModel>()
 			};
 
 		request.Sorts = state.SortDirection switch
