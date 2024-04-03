@@ -34,9 +34,9 @@ else
 
 		var response = await HttpClient.SendAsync(request);
 
-		customer = JsonSerializer.Deserialize<QueryApiResponse<CustomerDto>>(await response.Content.ReadAsStringAsync(), new JsonSerializerOptions
+		customer = JsonSerializer.Deserialize<ApiResponse<Data<CustomerDto>>>(await response.Content.ReadAsStringAsync(), new JsonSerializerOptions
 			{
 				PropertyNameCaseInsensitive = true
-			}).Data.items.FirstOrDefault();
+			})?.Data.Items.FirstOrDefault();
 	}
 }

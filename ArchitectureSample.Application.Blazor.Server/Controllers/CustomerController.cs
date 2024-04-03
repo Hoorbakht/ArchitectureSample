@@ -1,5 +1,6 @@
+using System.Text;
 using System.Text.Json;
-using ArchitectureSample.Application.Blazor.Client.Dtos;
+using ArchitectureSample.Application.Blazor.Server.Dtos;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ArchitectureSample.Application.Blazor.Server.Controllers;
@@ -34,21 +35,15 @@ public class CustomerController : ControllerBase
 	}
 
 	[HttpPost]
-	public async Task<IActionResult> Create(CreateCustomerModel customer)
+	public async Task<IActionResult> Create(CreateCustomerDto customer)
 	{
-		var response = await _httpClient.PostAsJsonAsync("api/v1/customers", new
-		{
-			Model = new Create<CreateCustomerModel>
-			{
-				Model = customer
-			}
-		});
-
-		if (response.IsSuccessStatusCode) return Ok();
+		var response = await _httpClient.PostAsJsonAsync("api/v1/customers", customer);
 
 		var content = await response.Content.ReadAsStringAsync();
 
-		return BadRequest(content);
+		return response.IsSuccessStatusCode
+			? Ok(content)
+			: BadRequest(content);
 	}
 
 	[HttpPut]
@@ -57,9 +52,19 @@ public class CustomerController : ControllerBase
 		return Ok("");
 	}
 
-	[HttpDelete("{id}")]
-	public async Task<IActionResult> Delete(Guid id)
+	[HttpDelete]
+	public async Task<IActionResult> Delete([FromBody] DeleteCustomerDto deleteCustomer)
 	{
-		return Ok(id);
+		var request = new HttpRequestMessage(HttpMethod.Delete, "/api/v1/customers");
+
+		var content = new StringContent(JsonSerializer.Serialize(deleteCustomer), Encoding.UTF8, "application/json");
+
+		request.Content = content;
+
+		var response = await _httpClient.SendAsync(request);
+
+		return response.IsSuccessStatusCode
+			? Ok(await response.Content.ReadAsStringAsync())
+			: BadRequest(await response.Content.ReadAsStringAsync());
 	}
 }

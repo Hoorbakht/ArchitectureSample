@@ -1,4 +1,6 @@
 @using ArchitectureSample.Application.Blazor.Client.Dtos
+@using ArchitectureSample.Application.Blazor.Client.Services
+@inject ICustomerService CustomerService
 @inject ISnackbar Snackbar
 
 <MudDialog Style="min-width: 400px">
@@ -34,7 +36,7 @@
 
 	private void DeleteCustomer()
 	{
-		//In a real world scenario this bool would probably be a service to delete the item from api/database
+		CustomerService.Delete(CustomerDto.Id);
 		Snackbar.Add("Customer Deleted", Severity.Success);
 		MudDialog?.Close(DialogResult.Ok(CustomerDto.Id));
 	}

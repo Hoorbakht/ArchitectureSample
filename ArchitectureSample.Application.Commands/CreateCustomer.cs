@@ -22,12 +22,12 @@ public class CreateCustomer
 			{
 				RuleFor(v => v.Model.FirstName)
 				    .NotEmpty().WithMessage("Name is required.")
-				    .MinimumLength(5).WithMessage("Name must be longer than 5 characters.")
+				    .MinimumLength(2).WithMessage("Name must be longer than 2 characters.")
 				    .MaximumLength(50).WithMessage("Name must not exceed 50 characters.");
 
 				RuleFor(v => v.Model.LastName)
 				    .NotEmpty().WithMessage("LastName is required.")
-				    .MinimumLength(5).WithMessage("LastName must be longer than 5 characters.")
+				    .MinimumLength(2).WithMessage("LastName must be longer than 2 characters.")
 				    .MaximumLength(60).WithMessage("LastName must not exceed 60 characters.");
 
 				RuleFor(x => x.Model.BirthOfDate)

@@ -4,13 +4,13 @@ namespace ArchitectureSample.Application.Blazor.Client.Services;
 
 public interface ICustomerService
 {
-	Task<QueryApiResponse<CustomerDto>?> Get(QueryApiRequest apiRequest);
+	Task<ApiResponse<Data<CustomerDto>>?> Get(QueryApiRequest apiRequest);
 
 	Task<CustomerDto> Get(Guid id);
 
-	Task Delete(Guid id);
+	Task<ApiResponse<CustomerDto>?> Delete(Guid id);
 
-	Task<HttpResponseMessage> Create(CustomerDto customerDto);
+	Task<ApiResponse<CustomerDto>?> Create(CustomerDto customerDto);
 
 	Task Update(CustomerDto customerDto);
 }

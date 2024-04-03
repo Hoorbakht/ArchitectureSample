@@ -11,7 +11,7 @@
 <MudText Typo="Typo.h3" GutterBottom="true">Customers</MudText>
 <br />
 
-<MudButton Color="Color.Primary" Variant="Variant.Filled" Href="/customers/create/new">Create</MudButton>
+<MudButton Color="Color.Primary" Variant="Variant.Filled" Href="/customers/create">Create</MudButton>
 <br />
 
 <style>
@@ -35,17 +35,17 @@
 		<MudTh><MudTableSortLabel T="CustomerDto" SortLabel="PhoneNumber">Phone Number</MudTableSortLabel></MudTh>
 		<MudTh><MudTableSortLabel T="CustomerDto" SortLabel="Email">Email</MudTableSortLabel></MudTh>
 		<MudTh><MudTableSortLabel T="CustomerDto" SortLabel="BankAccount">Bank Account</MudTableSortLabel></MudTh>
-		<MudTh><MudTableSortLabel T="CustomerDto" InitialDirection="SortDirection.Descending" SortLabel="Created">Creation Date</MudTableSortLabel></MudTh>
+		<MudTh><MudTableSortLabel T="CustomerDto" InitialDirection="SortDirection.Ascending" SortLabel="Created">Creation Date</MudTableSortLabel></MudTh>
 		<MudTh>Command(s)</MudTh>
 	</HeaderContent>
 	<RowTemplate>
 		<MudTd DataLabel="First Name">@context.FirstName</MudTd>
 		<MudTd DataLabel="Last Name">@context.LastName</MudTd>
-		<MudTd DataLabel="Date of Birth">@context.DateOfBirth.ToString("F")</MudTd>
+		<MudTd DataLabel="Date of Birth">@context.DateOfBirth!.Value.ToString("D")</MudTd>
 		<MudTd DataLabel="Phone Number">@context.PhoneNumber</MudTd>
 		<MudTd DataLabel="Email">@context.Email</MudTd>
 		<MudTd DataLabel="Bank Account">@context.BankAccount</MudTd>
-		<MudTd DataLabel="Created">@context.Created</MudTd>
+		<MudTd DataLabel="Created">@context.Created.ToString("MM/dd/yyyy hh:mm:ss")</MudTd>
 		<MudTd DataLabel="Command(s)">
 			<MudButton Color="Color.Warning" Variant="Variant.Filled" Href="@($"/customers/edit/{context.Id}")">Update</MudButton>
 			<MudButton Color="Color.Secondary" Variant="Variant.Filled" @onclick="@(() => DeleteCustomer(context))">Delete</MudButton>
@@ -64,7 +64,6 @@
 
 
 @code {
-	private List<CustomerDto>? _pagedData;
 	private MudTable<CustomerDto>? _table;
 
 	private int _totalItems;
@@ -90,15 +89,15 @@
 
 		var serverResponse = await CustomerService.Get(request);
 
-		_totalItems = serverResponse?.Data?.totalItems ?? 0;
+		_totalItems = serverResponse?.Data?.TotalItems ?? 0;
 
-		return new TableData<CustomerDto> { TotalItems = _totalItems, Items = serverResponse?.Data?.items };
+		return new TableData<CustomerDto> { TotalItems = _totalItems, Items = serverResponse?.Data?.Items };
 	}
 
 	private void OnSearch(string text)
 	{
 		_searchString = text;
-		_table.ReloadServerData();
+		_table?.ReloadServerData();
 	}
 
 	async Task DeleteCustomer(CustomerDto customerDto)
@@ -111,8 +110,8 @@
 
 		if (!result.Canceled)
 		{
-			Guid.TryParse(result.Data.ToString(), out var deletedCustomer);
-			_pagedData.RemoveAll(item => item.Id == deletedCustomer);
+			await Task.Delay(200);
+			await _table?.ReloadServerData()!;
 		}
 	}
 }

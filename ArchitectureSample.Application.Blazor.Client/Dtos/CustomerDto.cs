@@ -8,7 +8,7 @@ public record CustomerDto
 
 	public string? LastName { get; set; } = default!;
 
-	public DateTime DateOfBirth { get; set; } = default!;
+	public DateTime? DateOfBirth { get; set; } = default!;
 
 	public string? PhoneNumber { get; set; } = default!;
 
