@@ -20,9 +20,10 @@ public class ArchitectureSampleContext : AppDbContextBase
 		modelBuilder.Entity<Customer>().HasKey(x => x.Id);
 		modelBuilder.Entity<Customer>().Property(x => x.Id).HasColumnType("uniqueidentifier");
 
-		modelBuilder.Entity<Customer>().HasIndex(x => x.Id).IsUnique();
-		modelBuilder.Entity<Customer>().HasIndex(x => new { x.FirstName, x.LastName, x.DateOfBirth }).IsUnique();
-		modelBuilder.Entity<Customer>().HasIndex(x => x.Email).IsUnique();
+		modelBuilder.Entity<Customer>().HasIndex(x => x.Created,"ix_Created").IsDescending();
+
+		modelBuilder.Entity<Customer>().HasIndex(x => new { x.FirstName, x.LastName, x.DateOfBirth },"ix_Unique_FirstName-LastName-DateOfBirth").IsUnique();
+		modelBuilder.Entity<Customer>().HasIndex(x => x.Email,"ix_Unique_Email").IsUnique();
 		modelBuilder.Entity<Customer>().Ignore(x => x.DomainEvents);
 	}
 }

@@ -19,7 +19,7 @@ public static class Extensions
 			{
 				sqlOptions.MigrationsAssembly(typeof(TDbContext).Assembly.GetName().Name);
 				sqlOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
-			}).UseSnakeCaseNamingConvention();
+			});
 
 			doMoreDbContextOptionsConfigure?.Invoke(options);
 		});
