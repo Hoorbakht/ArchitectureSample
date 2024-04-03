@@ -12,7 +12,7 @@ public class Negated<T>(ISpecification<T> inner) : SpecificationBase<T>
 
 			var expression = Expression.Lambda<Func<T, bool>>(
 				Expression.Not(
-					Expression.Invoke(inner.Criteria, objParam)
+					Expression.Invoke(inner.Criteria!, objParam)
 				),
 				objParam
 			);

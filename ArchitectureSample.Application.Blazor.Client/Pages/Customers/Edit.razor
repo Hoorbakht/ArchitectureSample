@@ -37,6 +37,6 @@ else
 		customer = JsonSerializer.Deserialize<ApiResponse<Data<CustomerDto>>>(await response.Content.ReadAsStringAsync(), new JsonSerializerOptions
 			{
 				PropertyNameCaseInsensitive = true
-			})?.Data.Items.FirstOrDefault();
+			})?.Data?.Items!.FirstOrDefault();
 	}
 }

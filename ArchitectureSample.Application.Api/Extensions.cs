@@ -67,7 +67,7 @@ public static class Extensions
 
 		services.AddMediatR(x =>
 			{
-				foreach (var type in types)
+				foreach (var type in types!)
 					x.RegisterServicesFromAssemblyContaining(type);
 			})
 			.AddScoped(typeof(IPipelineBehavior<,>), typeof(RequestValidationBehavior<,>))

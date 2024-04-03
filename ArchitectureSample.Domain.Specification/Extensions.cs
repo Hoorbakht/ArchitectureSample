@@ -55,7 +55,7 @@ public static class Extensions
 			specificationType?.GetMethod(
 					orderByDescendingMethodName,
 					BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-				?.Invoke(gridSpec, new object[] { propertyReturningExpression });
+				?.Invoke(gridSpec, new object?[] { propertyReturningExpression });
 		}
 		else
 		{

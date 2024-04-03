@@ -60,7 +60,7 @@ public static class PredicateBuilder
 			_ => throw new NotSupportedException($"Invalid comparison operator '{comparison}'.")
 		};
 
-	private static Expression MakeList(Expression left, IEnumerable<string>? codes)
+	private static MethodCallExpression MakeList(Expression left, IEnumerable<string>? codes)
 	{
 		var objValues = codes!.Cast<object>().ToList();
 		var type = typeof(List<object>);
@@ -73,7 +73,7 @@ public static class PredicateBuilder
 	private static Expression MakeString(Expression source) =>
 		source.Type == typeof(string) ? source : Expression.Call(source, "ToString", Type.EmptyTypes);
 
-	private static Expression MakeBinary(ExpressionType type, Expression left, string? value)
+	private static BinaryExpression MakeBinary(ExpressionType type, Expression left, string? value)
 	{
 		object? typedValue = value;
 		if (left.Type != typeof(string))

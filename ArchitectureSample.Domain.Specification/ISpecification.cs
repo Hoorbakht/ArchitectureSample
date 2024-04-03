@@ -4,7 +4,7 @@ namespace ArchitectureSample.Domain.Specification;
 
 public interface ISpecification<T> : IRootSpecification
 {
-	Expression<Func<T, bool>> Criteria { get; }
+	Expression<Func<T, bool>>? Criteria { get; }
 
 	List<Expression<Func<T, object>>> Includes { get; }
 

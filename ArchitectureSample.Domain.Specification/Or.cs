@@ -12,8 +12,8 @@ public class Or<T>(ISpecification<T> left, ISpecification<T> right) : Specificat
 
 			var expression = Expression.Lambda<Func<T, bool>>(
 				Expression.OrElse(
-					Expression.Invoke(left.Criteria, objParam),
-					Expression.Invoke(right.Criteria, objParam)
+					Expression.Invoke(left.Criteria!, objParam),
+					Expression.Invoke(right.Criteria!, objParam)
 				),
 				objParam
 			);

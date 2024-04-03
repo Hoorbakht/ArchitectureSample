@@ -52,9 +52,9 @@
 </MudCard>
 
 @code {
-	[Inject] ISnackbar Snackbar { get; set; }
+	[Inject] ISnackbar? Snackbar { get; set; }
 
-	MudForm _form;
+	MudForm? _form;
 
 	readonly CustomerValidator _customerValidator = new();
 
@@ -62,7 +62,7 @@
 
 	private async Task Submit()
 	{
-		await _form.Validate();
+		await _form!.Validate();
 
 		if (_form.IsValid)
 		{
@@ -71,7 +71,7 @@
 
 			if (serverResponse!.IsError)
 				return;
-			Snackbar.Add("Customer saved successfully!");
+			Snackbar?.Add("Customer saved successfully!");
 			NavigationManager.NavigateTo("/customers");
 		}
 	}

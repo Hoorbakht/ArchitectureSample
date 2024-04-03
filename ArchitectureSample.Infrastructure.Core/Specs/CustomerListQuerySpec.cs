@@ -4,7 +4,7 @@ using ArchitectureSample.Domain.Specification;
 
 namespace ArchitectureSample.Infrastructure.Core.Specs;
 
-public sealed class CustomerListQuerySpec<TResponse> : GridSpecificationBase<Customer>
+public sealed class CustomerListQuerySpec<TResponse> : GridSpecificationBase<Customer> where TResponse : notnull
 {
 	public CustomerListQuerySpec(IListQuery<ListResultModel<TResponse>> gridQueryInput)
 	{

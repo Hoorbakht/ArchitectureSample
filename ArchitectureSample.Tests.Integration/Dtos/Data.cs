@@ -2,11 +2,11 @@ namespace ArchitectureSample.Tests.Integration.Dtos;
 
 public class Data<T> where T : class
 {
-    public List<T> items { get; set; }
+	public List<T>? Items { get; set; }
 
-    public int totalItems { get; set; }
+	public int TotalItems { get; set; }
 
-    public int page { get; set; }
+	public int Page { get; set; }
 
-    public int pageSize { get; set; }
+	public int PageSize { get; set; }
 }

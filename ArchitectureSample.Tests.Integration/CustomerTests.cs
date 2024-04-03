@@ -35,8 +35,8 @@ public class CustomerTests(CustomWebApplicationFactory<Program> factory) : IClas
 		});
 
 		result.Should().NotBeNull();
-		result!.Data!.totalItems.Should().Be(1);
-		result.Data.items.SingleOrDefault(x => x.Id == createResponse!.Data!.Id).Should()
+		result!.Data!.TotalItems.Should().Be(1);
+		result.Data.Items!.SingleOrDefault(x => x.Id == createResponse!.Data!.Id).Should()
 			.NotBeNull();
 		result.IsError.Should().BeFalse();
 		result.ErrorMessage.Should().BeNull();
@@ -135,7 +135,7 @@ public class CustomerTests(CustomWebApplicationFactory<Program> factory) : IClas
 
 		var request = new HttpRequestMessage(HttpMethod.Delete, "api/v1/customers");
 
-		request.Content = new StringContent(JsonSerializer.Serialize(new { Model = new { Id = createResponse!.Data!.Id } }), new MediaTypeHeaderValue("application/json"));
+		request.Content = new StringContent(JsonSerializer.Serialize(new { Model = new { createResponse!.Data!.Id } }), new MediaTypeHeaderValue("application/json"));
 
 		var response = await client.SendAsync(request);
 

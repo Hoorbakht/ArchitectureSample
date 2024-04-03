@@ -14,7 +14,7 @@ public class EmailValidator<T, TProperty> : PropertyValidator<T, TProperty>
 
 		try
 		{
-			var address = new System.Net.Mail.MailAddress(email);
+			var address = new System.Net.Mail.MailAddress(email!);
 			return address.Address == email;
 		}
 		catch

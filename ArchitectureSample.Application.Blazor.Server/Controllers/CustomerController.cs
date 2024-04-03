@@ -31,7 +31,7 @@ public class CustomerController : ControllerBase
 	[HttpGet("{id}")]
 	public async Task<IActionResult> Get(Guid id)
 	{
-		return Ok(id);
+		return await Task.FromResult(Ok(id));
 	}
 
 	[HttpPost]
@@ -49,7 +49,7 @@ public class CustomerController : ControllerBase
 	[HttpPut]
 	public async Task<IActionResult> Update()
 	{
-		return Ok("");
+		return await Task.FromResult(Ok());
 	}
 
 	[HttpDelete]

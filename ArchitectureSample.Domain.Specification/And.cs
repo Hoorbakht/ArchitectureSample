@@ -13,8 +13,8 @@ public class And<T>(ISpecification<T> left,
 
 			var expression = Expression.Lambda<Func<T, bool>>(
 				Expression.AndAlso(
-					Expression.Invoke(left.Criteria, objParam),
-					Expression.Invoke(right.Criteria, objParam)
+					Expression.Invoke(left.Criteria!, objParam),
+					Expression.Invoke(right.Criteria!, objParam)
 				),
 				objParam
 			);
