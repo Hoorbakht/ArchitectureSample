@@ -1,10 +1,8 @@
-﻿using System.Reflection;
-using ArchitectureSample.Domain.Core.Cqrs;
+﻿using ArchitectureSample.Domain.Core.Cqrs;
 using FluentValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.PlatformAbstractions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -21,25 +19,8 @@ public static class Extensions
 
 	
 
-	public static IServiceCollection AddSwagger(this IServiceCollection services, Type anchor)
-	{
-		services.AddSwaggerGen(
-			options =>
-			{
-				var xmlFile = XmlCommentsFilePath(anchor);
-				if (File.Exists(xmlFile))
-					options.IncludeXmlComments(xmlFile);
-			});
-
-		return services;
-
-		static string XmlCommentsFilePath(Type anchor)
-		{
-			var basePath = PlatformServices.Default.Application.ApplicationBasePath;
-			var fileName = anchor.GetTypeInfo().Assembly.GetName().Name + ".xml";
-			return Path.Combine(basePath, fileName);
-		}
-	}
+	public static IServiceCollection AddSwagger(this IServiceCollection services, Type anchor) => 
+		services.AddSwaggerGen();
 
 	public static IApplicationBuilder UseSwaggerCore(this IApplicationBuilder app) =>
 		app.UseSwagger().UseSwaggerUI();
