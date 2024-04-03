@@ -26,7 +26,7 @@ if (!builder.Environment.IsProduction())
 		Customer.Create(Guid.NewGuid(), "Mohammad","Afshar",DateTime.Now.AddYears(-35),"+31616833033","Mohammad.afshar@outlook.com","6789012345"),
 		Customer.Create(Guid.NewGuid(), "Elnaz","Makhtoom",DateTime.Now.AddYears(-32),"+989115185125","Elnaz.makhtoom@outlook.com","5678901234"),
 		Customer.Create(Guid.NewGuid(), "Sample Name","Sample Family",DateTime.Now.AddYears(-20),"+989209837654","sample.sample@outlook.com","6781234590"),
-		Customer.Create(Guid.NewGuid(), "John","Doe",DateTime.Now.AddYears(-60),"+989250982736","John.doe@outlook.com","8912345670")
+		Customer.Create(Guid.NewGuid(), "John","Doe",DateTime.Now.AddYears(-60),"+989129906543","John.doe@outlook.com","8912345670")
 	});
 
 	await context.SaveChangesAsync();
