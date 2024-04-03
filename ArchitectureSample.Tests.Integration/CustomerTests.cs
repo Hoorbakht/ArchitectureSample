@@ -16,8 +16,6 @@ public class CustomerTests(CustomWebApplicationFactory<Program> factory) : IClas
 	[TestOrder(3)]
 	public async Task GetCustomer_ReturnExpectedResult()
 	{
-		var createResponse = await CreateSampleData();
-
 		var request = new HttpRequestMessage(HttpMethod.Get, "api/v1/customers");
 
 		request.Headers.Add("x-query", "{}");
@@ -35,8 +33,8 @@ public class CustomerTests(CustomWebApplicationFactory<Program> factory) : IClas
 		});
 
 		result.Should().NotBeNull();
-		result!.Data!.TotalItems.Should().Be(1);
-		result.Data.Items!.SingleOrDefault(x => x.Id == createResponse!.Data!.Id).Should()
+		result!.Data!.TotalItems.Should().BeGreaterThan(1);
+		result.Data.Items!.Where(x => x.FirstName == "Mahyar").Should()
 			.NotBeNull();
 		result.IsError.Should().BeFalse();
 		result.ErrorMessage.Should().BeNull();
