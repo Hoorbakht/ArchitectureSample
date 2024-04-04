@@ -3,6 +3,10 @@ version: '3.8'
 networks:
   architecturesamplenetwork:       
 
+volumes:
+  RedisData:
+    driver: local
+
 services:
   SqlServerInstance:
     container_name: SqlServerContainer
@@ -23,6 +27,7 @@ services:
       dockerfile: Dockerfile
     depends_on:
       - SqlServerInstance
+      - Redis
     restart: on-failure
 
   BlazorClient:
@@ -46,3 +51,46 @@ services:
       dockerfile: Dockerfile-Blazor-Server
     depends_on:
       - BlazorClient 
+  
+  Redis:
+    image: redis:latest
+    restart: always
+    ports:
+      - '3232:6379'
+    volumes: 
+      - RedisData:/data
+
+  Prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - '2390:9090'
+    volumes:
+      - "./MonitoringFiles/prometheus.yml:/etc/prometheus/prometheus.yml"
+    networks:
+      - architecturesamplenetwork
+    depends_on:
+      - WebApi
+    restart: on-failure
+  
+  NodeExporter:
+    image: prom/node-exporter
+    networks:
+      - architecturesamplenetwork
+    ports:
+      - 9100:9100
+  
+  Grafana:
+    image: 'grafana/grafana:latest'
+    container_name: grafana
+    ports:
+      - '3000:3000'
+    depends_on:
+      - Prometheus
+    volumes:
+      - ./MonitoringFiles/provisioning:/etc/grafana/provisioning
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin@321
+    networks:
+      - architecturesamplenetwork
+    restart: on-failure

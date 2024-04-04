@@ -1,11 +1,13 @@
 ﻿using ArchitectureSample.Application.Commands;
 using ArchitectureSample.Application.Queries;
+using ArchitectureSample.Infrastructure.Cache;
 using ArchitectureSample.Infrastructure.Core.Validators;
 using ArchitectureSample.Infrastructure.Data;
 using ArchitectureSample.Infrastructure.Persistence;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using MediatR;
+using Prometheus;
 
 namespace ArchitectureSample.Application.Api;
 
@@ -23,25 +25,21 @@ public static class Extensions
 
 		if (environment.IsProduction())
 			services.AddSqlServerDbContext<ArchitectureSampleContext>(
-			    config.GetConnectionString("SqlServer") ?? "",
-			    null,
-			    svc => svc.AddRepository(typeof(Repository<>))
-			    );
+					config.GetConnectionString("SqlServer") ?? "",
+					null,
+					svc => svc.AddRepository(typeof(Repository<>))
+				)
+				.AddRedisCache(config.GetConnectionString("Redis")!, typeof(Program).Assembly.GetName().Name?.Split('.').First() ?? "Cache");
 		else
 			services.AddInMemoryDbContext<ArchitectureSampleContext>(
 				svc => svc.AddRepository(typeof(Repository<>))
-			);
+			).AddInMemoryCache();
 
-		services.AddCors(options =>
-		{
-			options.AddPolicy("BlazorOrigin",
-				builder =>
-				{
-					builder.WithOrigins(config["BlazorHost"]!)
-						.AllowAnyHeader()
-						.AllowAnyMethod();
-				});
-		});
+		services.AddCors(options => options.AddPolicy("BlazorOrigin",
+			builder => builder
+				.WithOrigins(config["BlazorHost"]!)
+				.AllowAnyHeader()
+				.AllowAnyMethod()));
 
 		return services;
 	}
@@ -54,6 +52,9 @@ public static class Extensions
 		app.UseRouting();
 		app.MapControllers();
 		app.MapHealthChecks("HealthChecks");
+
+		app.UseHttpMetrics();
+		app.MapMetrics();
 
 		app.UseCors("BlazorOrigin");
 

@@ -2,6 +2,7 @@ using ArchitectureSample.Application.Api;
 using ArchitectureSample.Application.Dtos;
 using ArchitectureSample.Domain.Entities;
 using ArchitectureSample.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,15 +11,14 @@ builder.Services.AddCoreServices(builder.Configuration, typeof(Anchor), builder.
 var app = builder.Build();
 app.UseCoreApplication(builder.Environment);
 
-if (!builder.Environment.IsProduction())
+await using var scope = app.Services.CreateAsyncScope();
+
+await using var context = scope.ServiceProvider.GetRequiredService<ArchitectureSampleContext>();
+
+await context.Database.EnsureCreatedAsync();
+
+if (!await context.Customers.AnyAsync())
 {
-	await using var scope = app.Services.CreateAsyncScope();
-
-	await using var context = scope.ServiceProvider.GetRequiredService<ArchitectureSampleContext>();
-
-	await context.Database.EnsureDeletedAsync();
-	await context.Database.EnsureCreatedAsync();
-
 	await context.Customers.AddRangeAsync(new List<Customer>
 	{
 		Customer.Create(Guid.NewGuid(), "Mahyar","Hoorbakht",DateTime.Now.AddYears(-32),"+989365386860","Mahyar.hoorbakht@outlook.com","1234567890"),
@@ -31,6 +31,7 @@ if (!builder.Environment.IsProduction())
 
 	await context.SaveChangesAsync();
 }
+
 await app.RunAsync();
 
 public partial class Program

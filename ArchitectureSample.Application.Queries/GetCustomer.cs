@@ -1,10 +1,12 @@
-﻿using ArchitectureSample.Application.Dtos;
+﻿using System.Text.Json;
+using ArchitectureSample.Application.Dtos;
 using ArchitectureSample.Domain.Core.Cqrs;
 using ArchitectureSample.Domain.Entities;
 using ArchitectureSample.Domain.Repository;
 using ArchitectureSample.Infrastructure.Core.Specs;
 using FluentValidation;
 using MediatR;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace ArchitectureSample.Application.Queries;
 
@@ -34,7 +36,7 @@ public class GetCustomer
 			}
 		}
 
-		internal class Handler(IGridRepository<Customer> customerRepository) : IRequestHandler<Query, ResultModel<ListResultModel<CustomerDto>>>
+		internal class Handler(IGridRepository<Customer> customerRepository, IDistributedCache distributedCache) : IRequestHandler<Query, ResultModel<ListResultModel<CustomerDto>>>
 		{
 			private readonly IGridRepository<Customer> _customerRepository = customerRepository ?? throw new ArgumentNullException(nameof(customerRepository));
 
@@ -44,6 +46,20 @@ public class GetCustomer
 				if (request == null) throw new ArgumentNullException(nameof(request));
 
 				var spec = new CustomerListQuerySpec<CustomerDto>(request);
+
+				var cacheKey = "Customers:" + JsonSerializer.Serialize(request);
+
+				var cache = await distributedCache.GetStringAsync(cacheKey, cancellationToken);
+
+				if (cache != null)
+				{
+					var cacheData = JsonSerializer.Deserialize<CacheContract>(cache);
+
+					var loadedData = JsonSerializer.Deserialize<List<CustomerDto>>(cacheData.Data);
+
+					return ResultModel<ListResultModel<CustomerDto>>.Create(ListResultModel<CustomerDto>.Create(loadedData, cacheData.TotalCount,
+						request.Page, request.PageSize));
+				}
 
 				var customers = await _customerRepository.FindAsync(spec);
 
@@ -62,6 +78,13 @@ public class GetCustomer
 
 				var totalCustomers = await _customerRepository.CountAsync(spec);
 
+				await distributedCache.SetStringAsync(cacheKey, JsonSerializer.Serialize(new CacheContract
+				{
+					Data = JsonSerializer.Serialize(customers),
+					TotalCount = totalCustomers
+				}),
+					cancellationToken);
+
 				var resultModel = ListResultModel<CustomerDto>.Create(
 				    customerModels.ToList(), totalCustomers, request.Page, request.PageSize);
 
@@ -69,4 +92,11 @@ public class GetCustomer
 			}
 		}
 	}
+}
+
+public class CacheContract
+{
+	public string? Data { get; set; }
+
+	public long TotalCount { get; set; }
 }
