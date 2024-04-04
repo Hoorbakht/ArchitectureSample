@@ -9,7 +9,7 @@ volumes:
 
 services:
   SqlServerInstance:
-    container_name: SqlServerContainer
+    container_name: ArchitectureSample-SqlServerInstance
     image: mcr.microsoft.com/mssql/server:2022-latest
     ports:
       - 8002:1433
@@ -18,7 +18,7 @@ services:
       - MSSQL_SA_PASSWORD=Hoorbakht@321
 
   WebApi:
-    container_name: architecturesample-api
+    container_name: ArchitectureSample-WebApi
     image: architecturesample:dev
     ports:
       - "8080:8080"
@@ -27,11 +27,12 @@ services:
       dockerfile: Dockerfile
     depends_on:
       - SqlServerInstance
-      - Redis
+      - RedisInstance
+      - MongoInstance
     restart: on-failure
 
   BlazorClient:
-    container_name: architecturesample-blazor-client
+    container_name: ArchitectureSample-BlazorClient
     image: architecturesample/blazor/client:dev
     ports:
       - "9191:80"
@@ -42,7 +43,7 @@ services:
       - WebApi 
   
   BlazorServer:
-    container_name: architecturesample-blazor-server
+    container_name: ArchitectureSample-BlazorServer
     image: architecturesample/blazor/server:dev
     ports:
       - "9091:8080"
@@ -52,7 +53,8 @@ services:
     depends_on:
       - BlazorClient 
   
-  Redis:
+  RedisInstance:
+    container_name: ArchitectureSample-Redis
     image: redis:latest
     restart: always
     ports:
@@ -60,9 +62,18 @@ services:
     volumes: 
       - RedisData:/data
 
-  Prometheus:
+  MongoInstance:
+    container_name: ArchitectureSample-Mongo
+    image: mongo:latest
+    restart: always
+    ports:
+      - '27027:27017'
+    networks:
+      - architecturesamplenetwork
+
+  PrometheusInstance:
     image: prom/prometheus
-    container_name: prometheus
+    container_name: ArchitectureSample-Prometheus
     ports:
       - '2390:9090'
     volumes:
@@ -73,20 +84,21 @@ services:
       - WebApi
     restart: on-failure
   
-  NodeExporter:
+  NodeExporterInstance:
+    container_name: ArchitectureSample-NodeExporter
     image: prom/node-exporter
     networks:
       - architecturesamplenetwork
     ports:
       - 9100:9100
   
-  Grafana:
+  GrafanaInstance:
     image: 'grafana/grafana:latest'
-    container_name: grafana
+    container_name: ArchitectureSample-Grafana
     ports:
       - '3000:3000'
     depends_on:
-      - Prometheus
+      - PrometheusInstance
     volumes:
       - ./MonitoringFiles/provisioning:/etc/grafana/provisioning
     environment:

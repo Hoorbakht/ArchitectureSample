@@ -47,19 +47,19 @@ public class GetCustomer
 
 				var spec = new CustomerListQuerySpec<CustomerDto>(request);
 
-				var cacheKey = "Customers:" + JsonSerializer.Serialize(request);
+				//var cacheKey = "Customers:" + JsonSerializer.Serialize(request);
 
-				var cache = await distributedCache.GetStringAsync(cacheKey, cancellationToken);
+				//var cache = await distributedCache.GetStringAsync(cacheKey, cancellationToken);
 
-				if (cache != null)
-				{
-					var cacheData = JsonSerializer.Deserialize<CacheContract>(cache);
+				//if (cache != null)
+				//{
+				//	var cacheData = JsonSerializer.Deserialize<CacheContract>(cache);
 
-					var loadedData = JsonSerializer.Deserialize<List<CustomerDto>>(cacheData.Data);
+				//	var loadedData = JsonSerializer.Deserialize<List<CustomerDto>>(cacheData.Data);
 
-					return ResultModel<ListResultModel<CustomerDto>>.Create(ListResultModel<CustomerDto>.Create(loadedData, cacheData.TotalCount,
-						request.Page, request.PageSize));
-				}
+				//	return ResultModel<ListResultModel<CustomerDto>>.Create(ListResultModel<CustomerDto>.Create(loadedData, cacheData.TotalCount,
+				//		request.Page, request.PageSize));
+				//}
 
 				var customers = await _customerRepository.FindAsync(spec);
 
@@ -78,12 +78,12 @@ public class GetCustomer
 
 				var totalCustomers = await _customerRepository.CountAsync(spec);
 
-				await distributedCache.SetStringAsync(cacheKey, JsonSerializer.Serialize(new CacheContract
-				{
-					Data = JsonSerializer.Serialize(customers),
-					TotalCount = totalCustomers
-				}),
-					cancellationToken);
+				//await distributedCache.SetStringAsync(cacheKey, JsonSerializer.Serialize(new CacheContract
+				//{
+				//	Data = JsonSerializer.Serialize(customers),
+				//	TotalCount = totalCustomers
+				//}),
+				//	cancellationToken);
 
 				var resultModel = ListResultModel<CustomerDto>.Create(
 				    customerModels.ToList(), totalCustomers, request.Page, request.PageSize);

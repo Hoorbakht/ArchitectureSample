@@ -11,12 +11,13 @@ namespace ArchitectureSample.Application.Api.Controllers;
 public class BaseController : Controller
 {
 	private ISender? _mediator;
+
 	protected ISender? Mediator => _mediator ??= HttpContext.RequestServices.GetService<ISender>();
 }
 
 [ApiController]
 [Route("[controller]")]
-public class ProductController : BaseController
+public class CustomerController : BaseController
 {
 	[HttpGet("/api/v1/customers")]
 	public async Task<IActionResult> HandleGetCustomersAsync([FromHeader(Name = "x-query")] string query, CancellationToken cancellationToken = new()) =>

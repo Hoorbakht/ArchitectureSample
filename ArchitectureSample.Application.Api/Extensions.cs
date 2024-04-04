@@ -1,8 +1,10 @@
-﻿using ArchitectureSample.Application.Commands;
+﻿using ArchitectureSample.Application.Api.Filters;
+using ArchitectureSample.Application.Commands;
 using ArchitectureSample.Application.Queries;
 using ArchitectureSample.Infrastructure.Cache;
 using ArchitectureSample.Infrastructure.Core.Validators;
 using ArchitectureSample.Infrastructure.Data;
+using ArchitectureSample.Infrastructure.Logging.Helpers;
 using ArchitectureSample.Infrastructure.Persistence;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -16,12 +18,18 @@ public static class Extensions
 	public static IServiceCollection AddCoreServices(this IServiceCollection services,
 	    IConfiguration config, Type apiType, IWebHostEnvironment environment)
 	{
-		services.AddHttpContextAccessor();
-		services.AddHealthChecks();
-		services.AddCustomMediatR(new[] { typeof(GetCustomer), typeof(CreateCustomer) });
-		services.AddCustomValidators(new[] { typeof(GetCustomer), typeof(CreateCustomer) });
-		services.AddControllers();
-		services.AddSwagger(apiType);
+		services.AddHealthChecks()
+			.Services
+			.AddNLog()
+			.AddSwagger(apiType)
+			.AddCustomMediatR(new[] { typeof(GetCustomer), typeof(CreateCustomer) })
+			.AddCustomValidators(new[] { typeof(GetCustomer), typeof(CreateCustomer) })
+			.AddCors(options => options.AddPolicy("BlazorOrigin",
+				builder => builder
+					.WithOrigins(config["BlazorHost"]!)
+					.AllowAnyHeader()
+					.AllowAnyMethod()))
+			.AddControllers(options => options.Filters.Add<CustomExceptionFilter>());
 
 		if (environment.IsProduction())
 			services.AddSqlServerDbContext<ArchitectureSampleContext>(
@@ -35,12 +43,6 @@ public static class Extensions
 				svc => svc.AddRepository(typeof(Repository<>))
 			).AddInMemoryCache();
 
-		services.AddCors(options => options.AddPolicy("BlazorOrigin",
-			builder => builder
-				.WithOrigins(config["BlazorHost"]!)
-				.AllowAnyHeader()
-				.AllowAnyMethod()));
-
 		return services;
 	}
 
@@ -49,24 +51,23 @@ public static class Extensions
 		if (env.IsDevelopment())
 			app.UseDeveloperExceptionPage();
 
-		app.UseRouting();
+		app.UseRouting()
+			.UseHttpMetrics()
+			.UseCors("BlazorOrigin")
+			.UseSwaggerCore();
+		
 		app.MapControllers();
 		app.MapHealthChecks("HealthChecks");
-
-		app.UseHttpMetrics();
 		app.MapMetrics();
 
-		app.UseCors("BlazorOrigin");
-
-		return app.UseSwaggerCore();
+		return app;
 	}
 
 	public static IServiceCollection AddCustomMediatR(this IServiceCollection services, Type[]? types = null,
 		Action<IServiceCollection>? doMoreActions = null)
 	{
-		services.AddHttpContextAccessor();
-
-		services.AddMediatR(x =>
+		services.AddHttpContextAccessor()
+			.AddMediatR(x =>
 			{
 				foreach (var type in types!)
 					x.RegisterServicesFromAssemblyContaining(type);

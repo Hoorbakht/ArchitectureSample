@@ -18,6 +18,7 @@
     <ProjectReference Include="..\ArchitectureSample.Application.Commands\ArchitectureSample.Application.Commands.csproj" />
     <ProjectReference Include="..\ArchitectureSample.Application.Queries\ArchitectureSample.Application.Queries.csproj" />
     <ProjectReference Include="..\ArchitectureSample.Infrastructure.Data\ArchitectureSample.Infrastructure.Data.csproj" />
+    <ProjectReference Include="..\ArchitectureSample.Infrastructure.Logging\ArchitectureSample.Infrastructure.Logging.csproj" />
   </ItemGroup>
 
 </Project>

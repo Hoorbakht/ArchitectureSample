@@ -5,6 +5,7 @@ using ArchitectureSample.Domain.Repository;
 using ArchitectureSample.Infrastructure.Core.Validators;
 using FluentValidation;
 using MediatR;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace ArchitectureSample.Application.Commands;
 
@@ -49,7 +50,7 @@ public class CreateCustomer
 			}
 		}
 
-		internal class Handler(IRepository<Customer> repository) : IRequestHandler<Command, ResultModel<CustomerDto>>
+		internal class Handler(IRepository<Customer> repository, IDistributedCache distributedCache) : IRequestHandler<Command, ResultModel<CustomerDto>>
 		{
 			public async Task<ResultModel<CustomerDto>> Handle(Command request, CancellationToken cancellationToken)
 			{

@@ -26,6 +26,7 @@ COPY ["./ArchitectureSample.Domain.Specification/", "ArchitectureSample.Domain.S
 COPY ["./ArchitectureSample.Infrastructure.Core/", "ArchitectureSample.Infrastructure.Core/"]
 COPY ["./ArchitectureSample.Infrastructure.Data/", "ArchitectureSample.Infrastructure.Data/"]
 COPY ["./ArchitectureSample.Infrastructure.Cache/", "ArchitectureSample.Infrastructure.Cache/"]
+COPY ["./ArchitectureSample.Infrastructure.Logging/", "ArchitectureSample.Infrastructure.Logging/"]
 COPY ["./ArchitectureSample.Infrastructure.Persistence/", "ArchitectureSample.Infrastructure.Persistence/"]
 
 # Tests
