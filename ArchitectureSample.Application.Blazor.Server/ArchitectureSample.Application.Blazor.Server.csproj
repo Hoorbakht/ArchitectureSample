@@ -13,6 +13,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\ArchitectureSample.Application.Blazor.Client\ArchitectureSample.Application.Blazor.Client.csproj" />
+		<ProjectReference Include="..\ArchitectureSample.Infrastructure.Logging\ArchitectureSample.Infrastructure.Logging.csproj" />
 	</ItemGroup>
 
 </Project>

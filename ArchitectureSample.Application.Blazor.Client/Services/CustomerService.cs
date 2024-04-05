@@ -5,15 +5,17 @@ using ArchitectureSample.Application.Blazor.Client.Dtos;
 
 namespace ArchitectureSample.Application.Blazor.Client.Services;
 
-public class CustomerService(HttpClient httpClient) : ICustomerService
+public class CustomerService(IEnumerable<HttpClient> httpClients) : ICustomerService
 {
+	private readonly HttpClient _httpClient = httpClients.Single(x => x.BaseAddress.Port != 8001);
+
 	public async Task<ApiResponse<Data<CustomerDto>>?> Get(QueryApiRequest apiRequest)
 	{
 		var request = new HttpRequestMessage(HttpMethod.Get, "api/Customer");
 
 		request.Headers.Add("x-query", JsonSerializer.Serialize(apiRequest));
 
-		var response = await httpClient.SendAsync(request);
+		var response = await _httpClient.SendAsync(request);
 
 		if (response.IsSuccessStatusCode)
 		{
@@ -37,7 +39,7 @@ public class CustomerService(HttpClient httpClient) : ICustomerService
 			}
 		}));
 
-		var response = await httpClient.SendAsync(request);
+		var response = await _httpClient.SendAsync(request);
 
 		if (response.IsSuccessStatusCode)
 		{
@@ -60,7 +62,7 @@ public class CustomerService(HttpClient httpClient) : ICustomerService
 
 		request.Content = content;
 
-		var response = await httpClient.SendAsync(request);
+		var response = await _httpClient.SendAsync(request);
 
 		return response.IsSuccessStatusCode
 			? JsonSerializer.Deserialize<ApiResponse<CustomerDto>>(
@@ -77,7 +79,7 @@ public class CustomerService(HttpClient httpClient) : ICustomerService
 
 	public async Task<ApiResponse<CustomerDto>?> Create(CustomerDto customerDto)
 	{
-		var response = await httpClient.PostAsJsonAsync("api/Customer", new
+		var response = await _httpClient.PostAsJsonAsync("api/Customer", new
 		{
 			Model = new CreateCustomerModel(customerDto.FirstName!, customerDto.LastName!, customerDto.DateOfBirth!.Value, customerDto.PhoneNumber!, customerDto.Email!, customerDto.BankAccount!)
 		});
@@ -98,7 +100,7 @@ public class CustomerService(HttpClient httpClient) : ICustomerService
 
 	public async Task<ApiResponse<CustomerDto>?> Update(CustomerDto customerDto)
 	{
-		var response = await httpClient.PutAsJsonAsync("api/Customer", new
+		var response = await _httpClient.PutAsJsonAsync("api/Customer", new
 		{
 			Model = new UpdateCustomerModel(customerDto.Id, customerDto.FirstName!, customerDto.LastName!, customerDto.DateOfBirth!.Value, customerDto.PhoneNumber!, customerDto.Email!, customerDto.BankAccount!)
 		});

@@ -1,12 +1,12 @@
-﻿using Microsoft.AspNetCore.Http.Features;
-using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.AspNetCore.Mvc;
-using ArchitectureSample.Domain.Core.Cqrs;
+﻿using ArchitectureSample.Domain.Core.Cqrs;
 using ArchitectureSample.Infrastructure.Logging.Dtos;
-using ILogger = NLog.ILogger;
 using ArchitectureSample.Infrastructure.Logging.Helpers;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+using ILogger = NLog.ILogger;
 
-namespace ArchitectureSample.Application.Api.Filters;
+namespace ArchitectureSample.Application.Blazor.Server.Filters;
 
 public class CustomExceptionFilter : ExceptionFilterAttribute
 {

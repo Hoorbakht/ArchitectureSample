@@ -4,12 +4,12 @@ scrape_configs:
  - job_name: prometheus
    static_configs:
     - targets:
-       - prometheus:9090
+       - PrometheusInstance:9090
  - job_name: node
    static_configs:
     - targets:
-       - NodeExporter:9100
+       - NodeExporterInstance:9100
  - job_name: Api
    static_configs:
     - targets:
-       - WebApi:8080
+       - WebApi:3030

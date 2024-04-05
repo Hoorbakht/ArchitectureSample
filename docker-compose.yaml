@@ -16,12 +16,14 @@ services:
     environment:
       - ACCEPT_EULA=Y
       - MSSQL_SA_PASSWORD=Hoorbakht@321
+    networks:
+      - architecturesamplenetwork
 
   WebApi:
     container_name: ArchitectureSample-WebApi
     image: architecturesample:dev
     ports:
-      - "8080:8080"
+      - "8080:3030"
     build:
       context: .
       dockerfile: Dockerfile
@@ -30,6 +32,8 @@ services:
       - RedisInstance
       - MongoInstance
     restart: on-failure
+    networks:
+      - architecturesamplenetwork
 
   BlazorClient:
     container_name: ArchitectureSample-BlazorClient
@@ -40,18 +44,22 @@ services:
       context: .
       dockerfile: Dockerfile-Blazor-Client
     depends_on:
-      - WebApi 
+      - WebApi
+    networks:
+      - architecturesamplenetwork
   
   BlazorServer:
     container_name: ArchitectureSample-BlazorServer
     image: architecturesample/blazor/server:dev
     ports:
-      - "9091:8080"
+      - "9091:4848"
     build:
       context: .
       dockerfile: Dockerfile-Blazor-Server
     depends_on:
-      - BlazorClient 
+      - BlazorClient
+    networks:
+      - architecturesamplenetwork
   
   RedisInstance:
     container_name: ArchitectureSample-Redis
@@ -61,6 +69,8 @@ services:
       - '3232:6379'
     volumes: 
       - RedisData:/data
+    networks:
+      - architecturesamplenetwork
 
   MongoInstance:
     container_name: ArchitectureSample-Mongo
@@ -71,38 +81,38 @@ services:
     networks:
       - architecturesamplenetwork
 
-  PrometheusInstance:
-    image: prom/prometheus
-    container_name: ArchitectureSample-Prometheus
-    ports:
-      - '2390:9090'
-    volumes:
-      - "./MonitoringFiles/prometheus.yml:/etc/prometheus/prometheus.yml"
-    networks:
-      - architecturesamplenetwork
-    depends_on:
-      - WebApi
-    restart: on-failure
+  # PrometheusInstance:
+  #   image: prom/prometheus
+  #   container_name: ArchitectureSample-Prometheus
+  #   ports:
+  #     - '2390:9090'
+  #   volumes:
+  #     - "./MonitoringFiles/prometheus.yml:/etc/prometheus/prometheus.yml"
+  #   networks:
+  #     - architecturesamplenetwork
+  #   depends_on:
+  #     - WebApi
+  #   restart: on-failure
   
-  NodeExporterInstance:
-    container_name: ArchitectureSample-NodeExporter
-    image: prom/node-exporter
-    networks:
-      - architecturesamplenetwork
-    ports:
-      - 9100:9100
+  # NodeExporterInstance:
+  #   container_name: ArchitectureSample-NodeExporter
+  #   image: prom/node-exporter
+  #   networks:
+  #     - architecturesamplenetwork
+  #   ports:
+  #     - 5454:9100
   
-  GrafanaInstance:
-    image: 'grafana/grafana:latest'
-    container_name: ArchitectureSample-Grafana
-    ports:
-      - '3000:3000'
-    depends_on:
-      - PrometheusInstance
-    volumes:
-      - ./MonitoringFiles/provisioning:/etc/grafana/provisioning
-    environment:
-      - GF_SECURITY_ADMIN_PASSWORD=admin@321
-    networks:
-      - architecturesamplenetwork
-    restart: on-failure
+  # GrafanaInstance:
+  #   image: 'grafana/grafana:latest'
+  #   container_name: ArchitectureSample-Grafana
+  #   ports:
+  #     - '3000:3000'
+  #   depends_on:
+  #     - PrometheusInstance
+  #   volumes:
+  #     - ./MonitoringFiles/provisioning:/etc/grafana/provisioning
+  #   environment:
+  #     - GF_SECURITY_ADMIN_PASSWORD=admin@321
+  #   networks:
+  #     - architecturesamplenetwork
+  #   restart: on-failure
