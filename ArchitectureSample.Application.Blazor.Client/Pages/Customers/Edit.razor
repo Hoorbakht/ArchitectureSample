@@ -79,7 +79,7 @@ else
 
 		if (_form.IsValid)
 		{
-			var serverResponse = await CustomerService.Update(_model);
+			var serverResponse = await CustomerService.Update(_model!);
 
 			if (serverResponse!.IsError)
 				return;

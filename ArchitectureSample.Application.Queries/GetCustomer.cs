@@ -36,7 +36,7 @@ public class GetCustomer
 			}
 		}
 
-		internal class Handler(IGridRepository<Customer> customerRepository, IDistributedCache distributedCache) : IRequestHandler<Query, ResultModel<ListResultModel<CustomerDto>>>
+		internal class Handler(IGridRepository<Customer> customerRepository /*, IDistributedCache distributedCache*/) : IRequestHandler<Query, ResultModel<ListResultModel<CustomerDto>>>
 		{
 			private readonly IGridRepository<Customer> _customerRepository = customerRepository ?? throw new ArgumentNullException(nameof(customerRepository));
 

@@ -9,6 +9,12 @@ public class CustomerService(IEnumerable<HttpClient> httpClients) : ICustomerSer
 {
 	private readonly HttpClient _httpClient = httpClients.Single(x => x.BaseAddress!.Port != 8080);
 
+	private readonly JsonSerializerOptions _options = new()
+	{
+		PropertyNameCaseInsensitive = true
+	};
+
+
 	public async Task<ApiResponse<Data<CustomerDto>>?> Get(QueryApiRequest apiRequest)
 	{
 		var request = new HttpRequestMessage(HttpMethod.Get, "api/Customer");
@@ -19,10 +25,7 @@ public class CustomerService(IEnumerable<HttpClient> httpClients) : ICustomerSer
 
 		return response.IsSuccessStatusCode
 			? JsonSerializer.Deserialize<ApiResponse<Data<CustomerDto>>>(
-				await response.Content.ReadAsStringAsync(), new JsonSerializerOptions
-				{
-					PropertyNameCaseInsensitive = true
-				})
+				await response.Content.ReadAsStringAsync(), _options)
 			: null;
 	}
 
@@ -39,10 +42,7 @@ public class CustomerService(IEnumerable<HttpClient> httpClients) : ICustomerSer
 
 		if (response.IsSuccessStatusCode)
 		{
-			return JsonSerializer.Deserialize<ApiResponse<Data<CustomerDto>>>(await response.Content.ReadAsStringAsync(), new JsonSerializerOptions
-			{
-				PropertyNameCaseInsensitive = true
-			});
+			return JsonSerializer.Deserialize<ApiResponse<Data<CustomerDto>>>(await response.Content.ReadAsStringAsync(), _options);
 		}
 		return null;
 	}
@@ -62,10 +62,7 @@ public class CustomerService(IEnumerable<HttpClient> httpClients) : ICustomerSer
 
 		return response.IsSuccessStatusCode
 			? JsonSerializer.Deserialize<ApiResponse<CustomerDto>>(
-				await response.Content.ReadAsStringAsync(), new JsonSerializerOptions
-				{
-					PropertyNameCaseInsensitive = true
-				})
+				await response.Content.ReadAsStringAsync(), _options)
 			: new ApiResponse<CustomerDto>
 			{
 				IsError = true,
@@ -82,10 +79,7 @@ public class CustomerService(IEnumerable<HttpClient> httpClients) : ICustomerSer
 
 		if (response.IsSuccessStatusCode)
 		{
-			return JsonSerializer.Deserialize<ApiResponse<CustomerDto>>(await response.Content.ReadAsStringAsync(), new JsonSerializerOptions
-			{
-				PropertyNameCaseInsensitive = true
-			});
+			return JsonSerializer.Deserialize<ApiResponse<CustomerDto>>(await response.Content.ReadAsStringAsync(), _options);
 		}
 		return new ApiResponse<CustomerDto>
 		{
@@ -103,10 +97,7 @@ public class CustomerService(IEnumerable<HttpClient> httpClients) : ICustomerSer
 
 		if (response.IsSuccessStatusCode)
 		{
-			return JsonSerializer.Deserialize<ApiResponse<CustomerDto>>(await response.Content.ReadAsStringAsync(), new JsonSerializerOptions
-			{
-				PropertyNameCaseInsensitive = true
-			});
+			return JsonSerializer.Deserialize<ApiResponse<CustomerDto>>(await response.Content.ReadAsStringAsync(), _options);
 		}
 		return new ApiResponse<CustomerDto>
 		{

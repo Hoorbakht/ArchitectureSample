@@ -50,7 +50,7 @@ public class CreateCustomer
 			}
 		}
 
-		internal class Handler(IRepository<Customer> repository, IDistributedCache distributedCache) : IRequestHandler<Command, ResultModel<CustomerDto>>
+		internal class Handler(IRepository<Customer> repository /*, IDistributedCache distributedCache*/) : IRequestHandler<Command, ResultModel<CustomerDto>>
 		{
 			public async Task<ResultModel<CustomerDto>> Handle(Command request, CancellationToken cancellationToken)
 			{

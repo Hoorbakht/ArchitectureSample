@@ -18,7 +18,7 @@ builder.Services.AddScoped<ICustomerService, CustomerService>()
 	.AddScoped(_ =>
 	{
 		var handler = new HttpClientHandler();
-		handler.ServerCertificateCustomValidationCallback = (_, _, _, _) => true;
+		//handler.ServerCertificateCustomValidationCallback = (_, _, _, _) => true;
 		return new HttpClient(handler)
 		{
 			BaseAddress = new Uri("localhost:9090")

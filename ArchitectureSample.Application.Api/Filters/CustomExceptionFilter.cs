@@ -14,7 +14,7 @@ public class CustomExceptionFilter : ExceptionFilterAttribute
 
 	public CustomExceptionFilter(IEnumerable<ILogger>? loggers)
 	{
-		_logger = loggers.SingleOrDefault(x => x.Name == "Application") ?? throw new ArgumentNullException("ILogger", "ILogger With Name 'Application' Not Registered !");
+		_logger = loggers?.SingleOrDefault(x => x.Name == "Application") ?? throw new ArgumentNullException("ILogger", "ILogger With Name 'Application' Not Registered !");
 	}
 
 	public override void OnException(ExceptionContext filterContext)
