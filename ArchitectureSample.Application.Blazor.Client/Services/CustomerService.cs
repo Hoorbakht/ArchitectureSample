@@ -7,7 +7,7 @@ namespace ArchitectureSample.Application.Blazor.Client.Services;
 
 public class CustomerService(IEnumerable<HttpClient> httpClients) : ICustomerService
 {
-	private readonly HttpClient _httpClient = httpClients.Single(x => x.BaseAddress.Port != 8001);
+	private readonly HttpClient _httpClient = httpClients.Single(x => x.BaseAddress!.Port != 8080);
 
 	public async Task<ApiResponse<Data<CustomerDto>>?> Get(QueryApiRequest apiRequest)
 	{
@@ -17,14 +17,13 @@ public class CustomerService(IEnumerable<HttpClient> httpClients) : ICustomerSer
 
 		var response = await _httpClient.SendAsync(request);
 
-		if (response.IsSuccessStatusCode)
-		{
-			return JsonSerializer.Deserialize<ApiResponse<Data<CustomerDto>>>(await response.Content.ReadAsStringAsync(), new JsonSerializerOptions
-			{
-				PropertyNameCaseInsensitive = true
-			});
-		}
-		return null;
+		return response.IsSuccessStatusCode
+			? JsonSerializer.Deserialize<ApiResponse<Data<CustomerDto>>>(
+				await response.Content.ReadAsStringAsync(), new JsonSerializerOptions
+				{
+					PropertyNameCaseInsensitive = true
+				})
+			: null;
 	}
 
 	public async Task<ApiResponse<Data<CustomerDto>>?> GetById(Guid id)
@@ -33,10 +32,7 @@ public class CustomerService(IEnumerable<HttpClient> httpClients) : ICustomerSer
 
 		request.Headers.Add("x-query", JsonSerializer.Serialize(new QueryApiRequest
 		{
-			Filters = new List<FilterModel>
-			{
-				new("Id","==",id.ToString())
-			}
+			Filters = [new FilterModel("Id", "==", id.ToString())]
 		}));
 
 		var response = await _httpClient.SendAsync(request);

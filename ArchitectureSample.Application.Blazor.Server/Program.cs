@@ -41,16 +41,16 @@ try
 			handler.ServerCertificateCustomValidationCallback = (_, _, _, _) => true;
 			return new HttpClient(handler) { BaseAddress = new Uri(builder.Configuration["ApiHost"]!) };
 		})
-		//.AddScoped(_ =>
-		//{
-		//	var handler = new HttpClientHandler();
-		//	handler.ServerCertificateCustomValidationCallback = (_, _, _, _) => true;
-		//	return new HttpClient(handler)
-		//	{
-		//		BaseAddress = new Uri(builder.WebHost.GetSetting("ASPNETCORE_URLS")!.Split(';')
-		//			.Single(x => x.StartsWith("http://")))
-		//	};
-		//})
+		.AddScoped(_ =>
+		{
+			var handler = new HttpClientHandler();
+			handler.ServerCertificateCustomValidationCallback = (_, _, _, _) => true;
+			return new HttpClient(handler)
+			{
+				BaseAddress = new Uri(builder.WebHost.GetSetting("ASPNETCORE_URLS")!.Split(';')
+					.Single(x => x.StartsWith("http://")))
+			};
+		})
 		.AddControllers(options => options.Filters.Add<CustomExceptionFilter>())
 		.Services
 		.AddHealthChecks()

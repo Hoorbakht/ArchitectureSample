@@ -9,7 +9,7 @@ namespace ArchitectureSample.Application.Blazor.Server.Controllers;
 [Route("api/[controller]")]
 public class CustomerController(IEnumerable<HttpClient> httpClients) : ControllerBase
 {
-	private readonly HttpClient _httpClient = httpClients.Single(x => x.BaseAddress!.Port != 4848);
+	private readonly HttpClient _httpClient = httpClients.Single(x => x.BaseAddress!.Port != 9090);
 
 	[HttpGet]
 	public async Task<IActionResult> Get([FromHeader(Name = "x-query")] string query)
